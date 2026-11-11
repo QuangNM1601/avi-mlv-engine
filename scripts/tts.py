@@ -47,10 +47,15 @@ def duration(path):
 
 async def synth(text, voice, rate, out):
     import edge_tts
+    import os
+    kw = {"rate": rate}
+    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
+    if proxy:  # aiohttp không tự dùng biến proxy của hệ thống
+        kw["proxy"] = proxy
     try:
-        comm = edge_tts.Communicate(text, voice, rate=rate, boundary="WordBoundary")
+        comm = edge_tts.Communicate(text, voice, boundary="WordBoundary", **kw)
     except TypeError:  # edge-tts < 7 không có tham số boundary (mặc định WordBoundary)
-        comm = edge_tts.Communicate(text, voice, rate=rate)
+        comm = edge_tts.Communicate(text, voice, **kw)
     words = []
     with open(out, "wb") as f:
         async for ch in comm.stream():
