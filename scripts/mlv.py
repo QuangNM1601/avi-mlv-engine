@@ -12,10 +12,11 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
                                                      dựng: khung hình mẫu (JPEG) và/hoặc MP4 (tiếng AAC)
                                                      --frames auto: khung mở + 1 khung/tiện ích + khung kết
                                                      --set bright=0.5: ghi đè CFG không sửa file
-  compose out.jpg "a.jpg|Nhãn A" "b.jpg|Nhãn B"... [--h 480]   ghép ảnh cạnh nhau có nhãn
+  compose out.jpg "a.jpg|Nhãn A" "b.jpg|Nhãn B"... [--h 480] [--cols 4]   ghép ảnh có nhãn (lưới)
 
 File cục bộ trong cfg.json (pois[].photo, markerUrl, brand.logo, brand.fontUrl, voice.url,
-voice.wordsUrl, music.url) được phục vụ cùng nguồn với trang engine, không cần đưa lên CDN.
+voice.wordsUrl, music.url) được phục vụ cùng nguồn với trang engine, không cần đưa lên CDN;
+ảnh/logo/font là URL web được tải trước về <out>/_cache.
 Có voice.wordsUrl cục bộ (words.json của tts.py) → tự điền poiDur, introDur, outroDur còn thiếu trong cfg.
 """
 import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, subprocess, sys, time, urllib.parse
@@ -117,6 +118,31 @@ def localize(cfg, base):
         if poi.get("photo"):
             poi["photo"] = m(poi["photo"])
     return cfg, files
+
+
+async def fetch_remote(cfg, ctx, cache):
+    """Tải trước ảnh tiện ích, logo, font, ảnh ghim là URL web về cache (tránh lỗi CORS); lỗi thì giữ URL."""
+    slots = [(poi, "photo") for poi in cfg.get("pois", [])]
+    if isinstance(cfg.get("brand"), dict):
+        slots += [(cfg["brand"], "logo"), (cfg["brand"], "fontUrl")]
+    slots.append((cfg, "markerUrl"))
+    warn = []
+    for obj, k in slots:
+        u = obj.get(k)
+        if not (isinstance(u, str) and u.startswith("http")):
+            continue
+        ext = (os.path.splitext(urllib.parse.urlparse(u).path)[1] or ".bin")[:6].lower()
+        f = cache / (hashlib.sha1(u.encode()).hexdigest()[:12] + ext)
+        if not f.exists():
+            try:
+                r = await ctx.request.get(u, headers={"User-Agent": UA}, timeout=15000)
+                if not r.ok:
+                    raise RuntimeError(f"HTTP {r.status}")
+                cache.mkdir(parents=True, exist_ok=True); f.write_bytes(await r.body())
+            except Exception as e:
+                warn.append(f"{k}: {u[:80]} ({e})"); continue
+        obj[k] = str(f)
+    return warn
 
 
 # ---------- lệnh ----------
@@ -349,6 +375,7 @@ async def cmd_run(a, ctx):
             raw[k] = json.loads(v)
         except ValueError:
             raw[k] = v
+    fetch_warn = await fetch_remote(raw, ctx, d / "_cache")
     cfg, files = localize(raw, cfg_path.parent)
     if not a.video:
         cfg["noVideo"] = True
@@ -363,6 +390,8 @@ async def cmd_run(a, ctx):
             break
     s["wallSec"] = round(time.time() - t0)
     res = {"ok": bool(s.get("done")), "run": started, "summary": s, "frames": [], "videos": []}
+    if fetch_warn:
+        res["fetchWarn"] = fetch_warn
     if s.get("done") and a.frames:
         if a.frames == "auto":  # 1 khung mở, 1 khung/tiện ích (lúc ảnh + tuyến đã hiện), 1 khung kết
             i0 = float(cfg.get("introDur") or (3.5 if cfg.get("brandMode") == "none" else 4))
@@ -425,11 +454,14 @@ def cmd_compose(a):
             dr.rectangle([0, 0, tw + 24, (H // 18) + 18], fill=(0, 0, 0))
             dr.text((12, 8), lab, fill=(255, 255, 255), font=font)
         tiles.append(im)
-    W = sum(t.width for t in tiles) + 12 * (len(tiles) - 1)
-    sheet = Image.new("RGB", (W, H), (255, 255, 255))
-    x = 0
-    for t in tiles:
-        sheet.paste(t, (x, 0)); x += t.width + 12
+    cols = a.cols or len(tiles)
+    rows = [tiles[i:i + cols] for i in range(0, len(tiles), cols)]
+    W = max(sum(t.width for t in r) + 12 * (len(r) - 1) for r in rows)
+    sheet = Image.new("RGB", (W, H * len(rows) + 12 * (len(rows) - 1)), (255, 255, 255))
+    for j, r in enumerate(rows):
+        x = 0
+        for t in r:
+            sheet.paste(t, (x, j * (H + 12))); x += t.width + 12
     if sheet.width > 2400:
         sheet = sheet.resize((2400, round(sheet.height * 2400 / sheet.width)), Image.LANCZOS)
     sheet.save(a.out, "JPEG", quality=85)
@@ -451,6 +483,7 @@ def main():
     g.add_argument("--frames", default=""); g.add_argument("--video", action="store_true")
     g.add_argument("--set", action="append", help="ghi đè CFG, vd --set bright=0.5 --set roads=false")
     g = sp.add_parser("compose"); g.add_argument("out"); g.add_argument("items", nargs="+"); g.add_argument("--h", type=int, default=480)
+    g.add_argument("--cols", type=int, default=0, help="số ảnh mỗi hàng (mặc định 1 hàng)")
     a = ap.parse_args()
     if a.cmd == "compose":
         return cmd_compose(a)

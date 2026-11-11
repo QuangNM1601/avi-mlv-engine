@@ -1,0 +1,11 @@
+{
+  "_ghi_chu": "Bộ nhớ tọa độ địa danh lớn dùng lại giữa các dự án (sân bay, ga, TTTM, bệnh viện, KCN, sân golf). Thêm mục mới sau mỗi video đã dựng. src: gmaps | osm | photon.",
+  "items": [
+    {"name": "Sân bay Tân Sơn Nhất", "cat": "KẾT NỐI", "icon": "airport", "lat": 10.815564, "lon": 106.663751, "tinh": "TP.HCM", "aliases": ["Tan Son Nhat", "SGN"], "src": "osm"},
+    {"name": "Lotte Mart Bình Dương", "cat": "MUA SẮM", "lat": 10.906029, "lon": 106.711694, "tinh": "TP.HCM (Bình Dương cũ)", "aliases": [], "src": "osm"},
+    {"name": "AEON Mall Bình Dương Canary", "cat": "MUA SẮM", "lat": 10.932342, "lon": 106.711704, "tinh": "TP.HCM (Bình Dương cũ)", "aliases": ["AEON Canary"], "src": "osm"},
+    {"name": "KCN VSIP I", "cat": "KCN", "lat": 10.931396, "lon": 106.725051, "tinh": "TP.HCM (Bình Dương cũ)", "aliases": ["VSIP 1"], "src": "osm"},
+    {"name": "BV Quốc tế Hạnh Phúc", "cat": "Y TẾ", "lat": 10.867844, "lon": 106.714202, "tinh": "TP.HCM (Bình Dương cũ)", "aliases": ["Hanh Phuc International Hospital"], "src": "osm"},
+    {"name": "Sân golf Sông Bé", "cat": "THỂ THAO", "lat": 10.925751, "lon": 106.70576, "tinh": "TP.HCM (Bình Dương cũ)", "aliases": ["Song Be Golf"], "src": "osm"}
+  ]
+}
