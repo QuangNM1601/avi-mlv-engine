@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.1.0 | `mlv-engine-3.1.0.js` | `a9998d2c95cac87c9fb99bd41e450893f4e72dec97b78b4b96b4acd8b279de9e` |
 | 3.0.2 | `mlv-engine-3.0.2.js` | `0c4ce7f52c3c30fe1e4ce4cc2b88f32db20706d9d59dcd76d531b0b13c597bf1` |
 | 3.0.1 | `mlv-engine-3.0.1.js` | `8fdcaf3f5bb60970e9cbe322b38c92802b4aa4a71c07b24bc1bc040824e6ea1e` |
 | 3.0.0 | `mlv-engine-3.0.0.js` | `66010c903d8300f8a062d7bdecd876c3395a204bcb441fd5a86f57676ef971d5` |
@@ -13,6 +14,18 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.1.0
+| CFG / API | Làm gì |
+|---|---|
+| `bright` 0–1 | Ảnh vệ tinh sáng hơn (brightness, contrast, saturate), giảm lớp phủ tối và viền tối. 0 = như 3.0 |
+| `roads` | Lớp tên đường Esri World Transportation phủ lên ảnh vệ tinh |
+| `pois[].photo` | Ảnh tiện ích bật lên cạnh ghim (khung trắng bo góc), tự né nhãn, ghim, thẻ, phụ đề |
+| `brandMode:'project'` | Thương hiệu tách đôi: màu, font, logo dự án là chính; logo AVI ở góc và khung kết. `'project-only'`: không có AVI |
+| `brand.fontUrl` | Font dự án từ file (FontFace), không cần Google Fonts |
+| `introDur` 3–8, `outroDur` 3,5–8 | Cảnh mở / kết dài theo giọng đọc (tts.py tính sẵn) |
+| `noVideo` | Chỉ dựng để xem khung (storyboard), không mã hóa video |
+| `MLV.wait()` | Thêm `photos` (số ảnh tiện ích tải được), `roads` |
 
 ## 3.0.2
 - `MLV.poi`: Overpass trước (chờ tối đa 15 giây); chỉ khi Overpass không trả gì mới gọi Photon, tuần tự 8 truy vấn cách nhau 1,1 giây, dừng sau 2 lỗi liên tiếp (tránh bị Photon chặn vì gọi dồn).
@@ -40,8 +53,9 @@ Cấu hình kiểu 2.2 chạy y như cũ.
 
 | File | Chạy ở đâu | Việc |
 |---|---|---|
+| `scripts/mlv.py <lệnh>` | Workspace của Claude (Python + Playwright + Chrome) | Cả quy trình không cần máy người dùng: `gmaps`, `geo`, `poi`, `dist`, `brand`, `images`, `run` (khung storyboard / MP4), `compose`. Xem đầu file |
 | `tools/brand-snippet.js` | Tab web chủ đầu tư (javascript_tool) | Trả JSON màu, font, logo; bản một dòng nằm trong SKILL.md |
-| `scripts/tts.py <thư mục>` | Máy người dùng (Python + edge-tts + ffmpeg) | `script.json` → `voice.mp3` + `words.json`, in `poiDur` |
+| `scripts/tts.py <thư mục>` | Workspace của Claude hoặc máy người dùng (Python + edge-tts + ffmpeg) | `script.json` → `voice.mp3` + `words.json`, in `poiDur`, `introDur`, `outroDur` |
 | `scripts/push_assets.sh <slug> <file...>` | Workspace của Claude | Đẩy logo/nhạc/giọng vào `assets/<slug>/`, in URL jsDelivr |
 | `scripts/merge_th.mjs <map.mp4> <talking.mp4>` | Máy người dùng (Node + ffmpeg) | Talking head mở → bản đồ → talking head chốt, −14 LUFS |
 

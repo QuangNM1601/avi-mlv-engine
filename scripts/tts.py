@@ -23,6 +23,7 @@ import asyncio, json, re, subprocess, sys, tempfile
 from pathlib import Path
 
 POI_MIN, POI_MAX = 5.5, 9.0
+SCENE_MAX = 8.0     # cảnh mở/kết dài nhất
 LEAD_POI = 0.6      # giây sau đầu cảnh tiện ích thì bắt đầu đọc
 TAIL_POI = 0.3      # khoảng trống trước cảnh kế tiếp
 LEAD_INTRO, LEAD_OUT, TAIL_END = 0.3, 0.5, 0.3
@@ -46,8 +47,12 @@ def duration(path):
 
 
 async def synth(text, voice, rate, out):
-    import edge_tts
     import os
+    ca = os.environ.get("SSL_CERT_FILE") or ("/root/.ccr/ca-bundle.crt" if os.path.exists("/root/.ccr/ca-bundle.crt") else "")
+    if ca:  # proxy giải mã TLS (máy chủ Claude): edge-tts dùng certifi, trỏ certifi sang bundle của proxy
+        import certifi
+        certifi.where = lambda: ca
+    import edge_tts
     kw = {"rate": rate}
     proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
     if proxy:  # aiohttp không tự dùng biến proxy của hệ thống
@@ -149,10 +154,15 @@ async def main():
         too_long += [f"{k}: {res[k]['dur']:.1f}s (tối đa {POI_MAX - LEAD_POI - TAIL_POI:.1f}s)" for k in res
                      if k.startswith("poi") and res[k]["dur"] + LEAD_POI + TAIL_POI > POI_MAX]
     poi_dur = round(min(POI_MAX, max(POI_MIN, poi_need)) + 0.049, 1)
-    if "intro" in res and LEAD_INTRO + res["intro"]["dur"] > intro_len + 0.5:
-        too_long.append(f"intro: {res['intro']['dur']:.1f}s (tối đa {intro_len + 0.2:.1f}s)")
-    if "outro" in res and LEAD_OUT + res["outro"]["dur"] > outro_len - TAIL_END:
-        too_long.append(f"outro: {res['outro']['dur']:.1f}s (tối đa {outro_len - LEAD_OUT - TAIL_END:.1f}s)")
+    # cảnh mở/kết tự dài ra theo giọng (engine nhận introDur/outroDur), tối đa SCENE_MAX
+    if "intro" in res:
+        intro_len = max(intro_len, round(LEAD_INTRO + res["intro"]["dur"] + 0.6 + 0.049, 1))
+        if intro_len > SCENE_MAX:
+            too_long.append(f"intro: {res['intro']['dur']:.1f}s (tối đa {SCENE_MAX - LEAD_INTRO - 0.6:.1f}s)")
+    if "outro" in res:
+        outro_len = max(outro_len, round(LEAD_OUT + res["outro"]["dur"] + TAIL_END + 0.6 + 0.049, 1))
+        if outro_len > SCENE_MAX:
+            too_long.append(f"outro: {res['outro']['dur']:.1f}s (tối đa {SCENE_MAX - LEAD_OUT - TAIL_END - 0.6:.1f}s)")
     if too_long:
         die("Câu quá dài, rút gọn rồi chạy lại (không tăng tốc giọng)", long=too_long)
 
@@ -178,10 +188,10 @@ async def main():
     caps = []
     for k in keys:
         caps += chunks(res[k]["text"], res[k]["words"], starts[k], res[k]["dur"])
-    (d / "words.json").write_text(json.dumps({"T": round(T, 2), "poiDur": poi_dur, "caps": caps}, ensure_ascii=False), encoding="utf-8")
+    (d / "words.json").write_text(json.dumps({"T": round(T, 2), "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "caps": caps}, ensure_ascii=False), encoding="utf-8")
     if not any(res[k]["words"] for k in keys):
         warn.append("Không có mốc từ từ edge-tts; phụ đề chia đều theo số từ")
-    print(json.dumps({"ok": True, "poiDur": poi_dur, "T": round(T, 2), "voice": str(out_mp3), "words": str(d / "words.json"), "warn": warn}, ensure_ascii=False))
+    print(json.dumps({"ok": True, "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "T": round(T, 2), "voice": str(out_mp3), "words": str(d / "words.json"), "warn": warn}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
