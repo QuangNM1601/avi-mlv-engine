@@ -6,17 +6,22 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.0.1 | `mlv-engine-3.0.1.js` | `8fdcaf3f5bb60970e9cbe322b38c92802b4aa4a71c07b24bc1bc040824e6ea1e` |
 | 3.0.0 | `mlv-engine-3.0.0.js` | `66010c903d8300f8a062d7bdecd876c3395a204bcb441fd5a86f57676ef971d5` |
 | 2.2.0 | `mlv-engine-2.2.0.js` | `3dcfcab2c64352e812303ceb3191d3fa36ba1fd11c49278b5eac2426e2bed12f` |
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
 
+## 3.0.1
+- `MLV.poi` chạy song song Overpass (overpass-api.de, overpass.private.coffee; chờ tối đa 15 giây) và Photon (12 truy vấn theo loại, 2 luồng); gộp, bỏ trùng, lọc trong bán kính ×3. Overpass công khai thường quá tải: khi đó kết quả chỉ từ Photon. `MLV.st.poiSrc` cho biết số kết quả mỗi nguồn.
+- `MLV.dist` có giới hạn chờ 15 giây.
+
 ## 3.0.0 — thêm so với 2.2.0
 
 | API / CFG | Làm gì |
 |---|---|
-| `MLV.poi({lat,lon}, {km, cats, perCat, max})` | 1 truy vấn Overpass, trả ≤ 20 tiện ích có tên theo 8 loại: `{cat, name, lat, lon, km, kind}` |
+| `MLV.poi({lat,lon}, {km, cats, perCat, max})` | Overpass + Photon (3.0.1), trả ≤ 20 tiện ích có tên theo 8 loại: `{cat, name, lat, lon, km, kind}` |
 | `MLV.dist(project, pois)` | 1 lệnh OSRM Table: gắn `km`, `min` đường lái xe, xếp theo phút (`est: "chim bay"` khi không có tuyến) |
 | CFG `brandMode` | `'avi'` (mặc định, như 2.2) · `'project'` (màu, font, logo chủ đầu tư từ `brand:{name, primary, accent, font, logo, website}`) · `'none'` |
 | CFG `voice:{url, wordsUrl}`, `captions`, `poiDur` | Trộn giọng đọc (nhạc tự hạ xuống), phụ đề theo `words.json`, độ dài mỗi cảnh tiện ích 5,5–9 giây |
