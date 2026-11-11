@@ -14,6 +14,7 @@ Không chép mã engine, script hay trang web thô vào hội thoại; chỉ đ�
 ## Ngân sách
 - Giai đoạn 1: ≤ 3 lượt tìm web + trang web dự án; `poi` 1 lần; 2 ảnh mỗi tiện ích; xem ảnh 3 lần (logo, lưới ảnh tiện ích, tờ khung hình); 1 doc.
 - Giai đoạn 2: đọc doc 1 lần, dựng 1 lần; chỉ xem khung khi `viol` > 0.
+- Dự án đã có storyboard → dùng lại doc đó, chỉ đổi phần người dùng yêu cầu, sang giai đoạn 2.
 
 ## 0. Chuẩn bị (mỗi phiên)
 ```bash
@@ -40,6 +41,7 @@ for h in server.arcgisonline.com router.project-osrm.org www.bing.com www.google
 - Màu trông sai (đỏ cảnh báo, xám) → chọn màu khác trong `colors`. Xem `brand/logo.png` 1 lần; méo, bị cắt hoặc không phải logo → bỏ logo.
 - Có logo → `brandMode:'project'` (dự án là chính; logo AVI ở góc và khung kết), `marker:'logo'`. Không có website hoặc logo → `brandMode:'avi'`, `marker:'pin'`.
 - CFG `brand`: `{name, primary, accent, font, logo:'brand/logo.png', fontUrl:'brand/font.woff2' (khi có fontFile), website}`.
+- Người dùng gửi logo PNG hoặc ảnh phối cảnh → lưu vào thư mục làm việc, `marker:'logo'`, `markerUrl:'<file>'`. `role` (vd "Đại lý phân phối") chỉ ghi khi người dùng xác nhận.
 
 ## 4. Tiện ích và cự ly
 1. Địa danh đã lưu: `git -C $M show origin/main:data/landmarks.json` → có sẵn thì dùng tọa độ đó.
@@ -90,7 +92,7 @@ Kết thúc: 1 dòng "Storyboard đã xong: sửa lời đọc ở bảng Kịch
 # GIAI ĐOẠN 2 — Dựng chính thức
 Bắt đầu khi người dùng nhắn "dựng" / "duyệt" (hoặc gửi link storyboard + "dựng").
 1. Đọc doc (`mcp__Claude_Docs__read`, nạp schema qua ToolSearch): bảng Thiết lập, bảng Kịch bản, khối Dữ liệu dựng. Thư mục làm việc còn → dùng. Mất → bước 0, tạo lại `cfg.json`, `script.json` từ khối dữ liệu (`photo` = URL `img` của ảnh đã chọn, tự tải khi `run`), chạy lại `mlv.py brand`.
-2. Áp vào CFG: Khung hình → `formats` · Nhạc → `music` (`nang-dong` | `sang-trong` | `none`) · Giọng → `script.voice` hoặc bỏ `voice` + `captions:false` · Thương hiệu → `brandMode` (`project` | `avi` | `project-only` | `none`) · Độ sáng → `bright` · Tên đường → `roads` · Phụ đề → `captions` · cảnh "Bỏ" → xóa khỏi `pois` và `script.pois` · Ảnh A / B / Không ảnh → `pois[].photo` · lời đọc đã sửa → `script.json`.
+2. Áp vào CFG: Khung hình → `formats` · Nhạc → `music` (`nang-dong` | `sang-trong` | `none`; nhạc riêng người dùng gửi và xác nhận có quyền → `ffmpeg -i in -t 60 -ac 2 -b:a 128k music.mp3`, `music:{url:'music.mp3'}`) · Giọng → `script.voice` hoặc bỏ `voice` + `captions:false` · Thương hiệu → `brandMode` (`project` | `avi` | `project-only` | `none`) · Độ sáng → `bright` · Tên đường → `roads` · Phụ đề → `captions` · cảnh "Bỏ" → xóa khỏi `pois` và `script.pois` · Ảnh A / B / Không ảnh → `pois[].photo` · lời đọc đã sửa → `script.json`.
 3. Lời đọc, giọng hoặc số cảnh đổi → chạy lại `tts.py`.
 4. `mlv.py run cfg.json --out out --video` chạy nền (`run_in_background`, timeout 40 phút); chờ thông báo, không thăm dò.
 5. Kiểm tra như bước 7.2, thêm: `out[].audio` có tiếng; `routes[].est` = "chim bay" → báo người dùng; `fetchWarn` → ảnh nào không tải được.
