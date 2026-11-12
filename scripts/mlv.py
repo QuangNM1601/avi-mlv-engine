@@ -4,9 +4,10 @@
 Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   geo    "tên 1" ["tên 2"...] --near LAT,LON        tọa độ qua Photon → Nominatim (MLV.geo)
   gmaps  "<link Google Maps | tên địa điểm>"...     tọa độ đọc từ Google Maps
+  gpoi   LAT LON [--km 8] [--per 3] [--dist]          tiện ích nổi bật theo Google Maps (11 loại, xếp theo số đánh giá)
   poi    LAT LON [--km 3] [--dist]                   ứng viên tiện ích (MLV.poi) [+ km/phút]
   dist   LAT LON --pois pois.json [--travel moto|car] km/phút xe máy (mặc định, 25–30 km/h) hoặc ô tô (OSRM)
-  brand  <url web dự án> --out DIR                   màu, font (tải file), logo (logo.png)
+  brand  <url web dự án> --out DIR                   màu, font (tải file), logo (logo.png); trang nặng → tự đọc HTML/CSS
   images "<từ khóa>" --out DIR --prefix p1 [--n 2] [--place "<tên, tỉnh>"]
                                                      tìm + tải ảnh web (Bing, ảnh địa điểm Google Maps, DDG), giữ n ảnh
   renders <url web dự án> --out DIR [--n 6]         ảnh phối cảnh lớn (≥1100 px, ngang) cho cảnh mở/kết
@@ -25,7 +26,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.3.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.4.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -211,6 +212,65 @@ async def cmd_gmaps(a, ctx):
     out({"ok": True, "gmaps": res})
 
 
+GPOI_CATS = [
+    ("Y TẾ", "bệnh viện"), ("MUA SẮM", "trung tâm thương mại"), ("MUA SẮM", "siêu thị"),
+    ("GIÁO DỤC", "trường đại học"), ("GIÁO DỤC", "trường quốc tế"), ("KẾT NỐI", "ga metro"),
+    ("KẾT NỐI", "bến xe"), ("CÔNG VIÊN", "công viên"), ("THỂ THAO", "sân golf"),
+    ("HÀNH CHÍNH", "ủy ban nhân dân"), ("KCN", "khu công nghiệp"),
+]
+
+
+def _km(lat1, lon1, lat2, lon2):
+    import math
+    return math.hypot((lat2 - lat1) * 111.2, (lon2 - lon1) * 111.2 * math.cos(math.radians(lat1)))
+
+
+async def cmd_gpoi(a, ctx):
+    """Tiện ích nổi bật quanh dự án theo Google Maps (tìm theo loại quanh tọa độ, xếp theo số đánh giá)."""
+    pg = await ctx.new_page()
+    found = {}
+    for cat, q in GPOI_CATS:
+        try:
+            await pg.goto(f"https://www.google.com/maps/search/{urllib.parse.quote(q)}/@{a.lat},{a.lon},14z?hl=vi",
+                          wait_until="domcontentloaded", timeout=30000)
+            if "consent." in pg.url:  # chọn phương án ít chia sẻ dữ liệu nhất
+                for t in ("Reject all", "Từ chối tất cả"):
+                    b = pg.get_by_role("button", name=t)
+                    if await b.count():
+                        await b.first.click(); break
+            await pg.wait_for_selector('a[href*="/maps/place/"]', timeout=12000)
+            await pg.wait_for_timeout(1200)
+            items = await pg.eval_on_selector_all('a[href*="/maps/place/"]', """els => els.map(e => {
+                const card = e.closest('[role=article]') || e.parentElement;
+                return {name: e.getAttribute('aria-label') || '', href: e.href, text: card ? card.innerText.slice(0, 300) : ''};
+            })""")
+        except Exception:
+            items = []
+        for it in items:
+            c = _coords_from_url(it["href"])
+            if not c or not it["name"] or re.search(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]", it["name"]):
+                continue
+            km = _km(a.lat, a.lon, c[0], c[1])
+            if km > a.km:
+                continue
+            m = re.search(r"(\d[,.]\d)\s*\(([\d.,]+)\)", it["text"])
+            reviews = int(re.sub(r"[.,]", "", m.group(2))) if m else 0
+            key = it["name"].lower()
+            if key not in found or reviews > found[key]["reviews"]:
+                found[key] = {"cat": cat, "name": it["name"], "lat": round(c[0], 7), "lon": round(c[1], 7),
+                              "line": round(km, 1), "rating": float(m.group(1).replace(",", ".")) if m else None,
+                              "reviews": reviews, "q": q}
+        await pg.wait_for_timeout(800)
+    res = sorted(found.values(), key=lambda x: -x["reviews"])
+    per, outl = {}, []
+    for r in res:
+        if per.get(r["cat"], 0) < a.per:
+            per[r["cat"]] = per.get(r["cat"], 0) + 1; outl.append(r)
+    if a.dist and outl:
+        outl = await moto_dist(ctx, a.lat, a.lon, outl)
+    out({"ok": bool(outl), "pois": outl, **({} if outl else {"err": "Google Maps không trả kết quả"})}, 0 if outl else 2)
+
+
 async def cmd_poi(a, ctx):
     pg = await engine_page(ctx)
     P = {"lat": a.lat, "lon": a.lon}
@@ -259,69 +319,131 @@ async def cmd_dist(a, ctx):
 FONT_FACE = re.compile(r"@font-face\s*{([^}]*)}", re.I | re.S)
 
 
-async def cmd_brand(a, ctx):
-    d = Path(a.out); d.mkdir(parents=True, exist_ok=True)
-    pg = await ctx.new_page()
-    await pg.goto(a.url, wait_until="domcontentloaded", timeout=45000)
-    try:
-        await pg.wait_for_load_state("networkidle", timeout=15000)
-    except Exception:
-        pass
-    js = BRAND_JS.read_text(encoding="utf-8")
-    info = json.loads(await pg.evaluate(js))
-    res = {"ok": True, **info, "logoFile": None, "fontFile": None}
-    # logo: chụp đúng phần tử logo, nền trong suốt
-    sel = ('header img,nav img,a[href="/"] img,[class*=logo] img,img[class*=logo],img[alt*=logo i],img[src*=logo i],'
-           'header svg,[class*=logo] svg')
-    for el in await pg.query_selector_all(sel):
+ICON_FONTS = re.compile(r"awesome|icon|glyph|dashicons|swiper|slick|eicons|material|inherit|initial|sans-serif|serif|monospace|system-ui|-apple-system|segoe|arial|helvetica|roboto|times", re.I)
+
+
+def _hue(rgb):
+    import colorsys
+    h, l, sat = colorsys.rgb_to_hls(*[x / 255 for x in rgb])
+    return h * 360, l, sat
+
+
+async def _brand_static(a, ctx, d):
+    """Không mở được trang (quá thời gian): đọc HTML + CSS, lấy màu, font, logo không cần dựng trang."""
+    from PIL import Image
+    import collections
+    r = await ctx.request.get(a.url, headers={"User-Agent": UA}, timeout=30000)
+    html = await r.text()
+    texts = [html] + re.findall(r"<style[^>]*>(.*?)</style>", html, re.S)
+    for h in re.findall(r"""href=["']([^"']+\.css[^"']*)["']""", html)[:15]:
         try:
-            bb = await el.bounding_box()
-            if not bb or bb["width"] < 40 or bb["height"] < 12 or bb["width"] / bb["height"] > 8:
+            rr = await ctx.request.get(urllib.parse.urljoin(a.url, h), timeout=15000)
+            rr.ok and texts.append(await rr.text())
+        except Exception:
+            pass
+    css = "\n".join(texts)
+    cnt = collections.Counter(c.upper() for c in re.findall(r"#[0-9a-fA-F]{6}\b", css))
+    colors = []
+    for c, n in cnt.most_common(40):
+        rgb = tuple(int(c[i:i + 2], 16) for i in (1, 3, 5))
+        h, l, sat = _hue(rgb)
+        if c in ("#0000EE", "#0000FF", "#551A8B") or sat < .18 or not (.12 <= l <= .8) or (195 <= h <= 225 and sat > .9):
+            continue
+        if True:  # bỏ xám, trắng, đen, xanh mặc định của thư viện
+            colors.append(c)
+    primary = colors[0] if colors else None
+    accent = next((c for c in colors[1:] if abs(_hue(tuple(int(c[i:i + 2], 16) for i in (1, 3, 5)))[0] - _hue(tuple(int(primary[i:i + 2], 16) for i in (1, 3, 5)))[0]) > 40), colors[1] if len(colors) > 1 else None) if primary else None
+    fams = collections.Counter(f.strip().strip("'\"") for f in re.findall(r"font-family\s*:\s*['\"]?([^;,'\"}]+)", css))
+    font = next((f for f, _ in fams.most_common() if not ICON_FONTS.search(f)), "")
+    res = {"ok": True, "mode": "static", "site": urllib.parse.urlparse(a.url).hostname, "name": "", "primary": primary,
+           "accent": accent, "colors": colors[:6], "font": font, "logoFile": None, "fontFile": None, "logos": []}
+    m = re.search(r"<title>(.*?)</title>", html, re.S)
+    res["name"] = re.split(r"[|\-–—]", m.group(1))[0].strip() if m else ""
+    # logo: mọi ảnh có chữ "logo"; ưu tiên ảnh không trắng, lớn nhất; chỉ có logo trắng → dùng trên nền màu chính
+    urls = []
+    for u in re.findall(r"""(?:src|data-src|srcset|href)=["']([^"']+)["']""", html):
+        whole = re.sub(r"https?://sp-ao\.shortpixel\.ai/client/[^/]*/", "", u)
+        for part in re.split(r",\s+", whole):
+            v = part.strip().split(" ")[0]
+            if re.search(r"logo", v, re.I) and re.search(r"\.(png|jpe?g|webp|svg)(\?|$)", v, re.I):
+                v = urllib.parse.urljoin(a.url, v)
+                v not in urls and urls.append(v)
+    best = None
+    for i, u in enumerate(urls[:12]):
+        try:
+            rr = await ctx.request.get(u, headers={"User-Agent": UA, "Referer": a.url}, timeout=15000)
+            if not rr.ok or u.lower().endswith(".svg"):
                 continue
-            await el.scroll_into_view_if_needed()
-            await el.screenshot(path=str(d / "logo.png"), omit_background=True, scale="device")
-            res["logoFile"] = str(d / "logo.png")
-            break
+            im = Image.open(io.BytesIO(await rr.body())).convert("RGBA")
+            w, h = im.size
+            if w < 60 or w / h > 8:
+                continue
+            px = [p for p in im.resize((48, round(48 * h / w) or 1)).getdata() if p[3] > 128]
+            vf = sum(1 for p in px if (p[0] + p[1] + p[2]) / 3 < 200) / max(1, len(px))  # phần nhìn rõ trên nền trắng
+            light = vf < .85
+            f = d / f"logo_{i}.png"; im.save(f)
+            res["logos"].append({"file": str(f), "w": w, "h": h, "light": light, "visible": round(vf, 2), "url": u})
+            score = w * h * vf ** 3
+            if not best or score > best[0]:
+                best = (score, f, light)
         except Exception:
             continue
-    # font: tìm @font-face cùng tên trong CSS của trang, tải file (ưu tiên woff2, đậm)
-    fam = (info.get("font") or "").lower()
-    if fam:
-        sheets = await pg.evaluate("[...document.styleSheets].map(s => s.href).filter(Boolean)")
-        inline = await pg.evaluate("[...document.querySelectorAll('style')].map(s => s.textContent).join('\\n')")
-        texts = [(pg.url, inline)]
-        for h in sheets[:15]:
-            try:
-                r = await ctx.request.get(h, timeout=15000)
-                if r.ok:
-                    texts.append((h, await r.text()))
-            except Exception:
-                pass
-        best = None
-        for base, css in texts:
-            for blk in FONT_FACE.findall(css):
-                fm = re.search(r"font-family\s*:\s*['\"]?([^;'\"]+)", blk, re.I)
-                if not fm or fm.group(1).strip().lower() != fam:
-                    continue
-                w = re.search(r"font-weight\s*:\s*(\d+)", blk)
-                w = int(w.group(1)) if w else 400
-                for u in re.findall(r"url\(\s*['\"]?([^'\")]+)['\"]?\s*\)", blk):
-                    if u.startswith("data:"):
-                        continue
-                    sc = (100 - abs(700 - w) / 10) + (20 if ".woff2" in u else 10 if ".woff" in u else 0)
-                    if not best or sc > best[0]:
-                        best = (sc, urllib.parse.urljoin(base, u))
-        if best:
-            try:
-                r = await ctx.request.get(best[1], timeout=20000)
-                if r.ok:
-                    ext = Path(urllib.parse.urlparse(best[1]).path).suffix or ".woff2"
-                    (d / ("font" + ext)).write_bytes(await r.body())
-                    res["fontFile"] = str(d / ("font" + ext))
-            except Exception:
-                pass
-    out(res)
+    if best:
+        import shutil as _sh
+        _sh.copy(best[1], d / "logo.png"); res["logoFile"] = str(d / "logo.png")
+        if best[2] and primary:
+            res["plate"] = primary  # logo trắng: đặt trên nền màu chính (CFG brand.plate)
+    # font: file @font-face của họ font chính, ưu tiên đậm 600–700
+    bestf = None
+    for blk in FONT_FACE.findall(css):
+        fm = re.search(r"font-family\s*:\s*['\"]?([^;'\"]+)", blk, re.I)
+        if not fm or fm.group(1).strip().lower() != font.lower():
+            continue
+        wt = re.search(r"font-weight\s*:\s*(\d+)", blk); wt = int(wt.group(1)) if wt else 400
+        if re.search(r"font-style\s*:\s*italic", blk, re.I) or re.search(r"italic", blk, re.I):
+            continue
+        for u in re.findall(r"url\(\s*['\"]?([^'\")]+)['\"]?\s*\)", blk):
+            if u.startswith("data:"):
+                continue
+            sc = 100 - abs(650 - wt) / 10 + (20 if ".woff2" in u else 10 if ".woff" in u else 0)
+            if not bestf or sc > bestf[0]:
+                bestf = (sc, urllib.parse.urljoin(a.url, u))
+    if bestf:
+        try:
+            rr = await ctx.request.get(bestf[1], timeout=30000)
+            if rr.ok:
+                ext = Path(urllib.parse.urlparse(bestf[1]).path).suffix or ".woff2"
+                (d / ("font" + ext)).write_bytes(await rr.body()); res["fontFile"] = str(d / ("font" + ext))
+        except Exception:
+            pass
+    return res
 
+
+async def cmd_brand(a, ctx):
+    """Màu, font từ CSS (đếm tần suất, bỏ màu mặc định thư viện); logo từ ảnh có chữ "logo",
+    không có thì mở trang chụp phần tử logo."""
+    d = Path(a.out); d.mkdir(parents=True, exist_ok=True)
+    try:
+        res = await _brand_static(a, ctx, d)
+    except Exception as e:
+        res = {"ok": False, "err": f"không đọc được web: {str(e)[:120]}", "logos": []}
+    if not res.get("logoFile"):
+        pg = await ctx.new_page()
+        try:
+            await pg.goto(a.url, wait_until="domcontentloaded", timeout=40000)
+            sel = ('header img,nav img,a[href="/"] img,[class*=logo] img,img[class*=logo],img[alt*=logo i],img[src*=logo i],'
+                   'header svg,[class*=logo] svg')
+            for el in await pg.query_selector_all(sel):
+                bb = await el.bounding_box()
+                if not bb or bb["width"] < 40 or bb["height"] < 12 or bb["width"] / bb["height"] > 8:
+                    continue
+                await el.scroll_into_view_if_needed()
+                await el.screenshot(path=str(d / "logo.png"), omit_background=True, scale="device")
+                res["logoFile"] = str(d / "logo.png"); res["ok"] = True
+                break
+        except Exception:
+            pass
+    out(res, 0 if res.get("ok") else 2)
 
 BAD_IMG = re.compile(r"logo|icon|avatar|sodo|so-do|ban-do|bando|banner|map[-_.]|qr", re.I)
 
@@ -632,6 +754,8 @@ def main():
     g = sp.add_parser("poi"); g.add_argument("lat", type=float); g.add_argument("lon", type=float)
     g.add_argument("--km", type=float, default=3); g.add_argument("--dist", action="store_true")
     g.add_argument("--travel", default="moto", choices=["moto", "car"])
+    g = sp.add_parser("gpoi"); g.add_argument("lat", type=float); g.add_argument("lon", type=float)
+    g.add_argument("--km", type=float, default=8); g.add_argument("--per", type=int, default=3); g.add_argument("--dist", action="store_true")
     g = sp.add_parser("dist"); g.add_argument("lat", type=float); g.add_argument("lon", type=float); g.add_argument("--pois", required=True)
     g.add_argument("--travel", default="moto", choices=["moto", "car"])
     g = sp.add_parser("brand"); g.add_argument("url"); g.add_argument("--out", required=True)
@@ -653,7 +777,7 @@ def main():
         async with async_playwright() as p:
             b, ctx = await open_browser(p)
             try:
-                await {"geo": cmd_geo, "gmaps": cmd_gmaps, "poi": cmd_poi, "dist": cmd_dist, "brand": cmd_brand,
+                await {"geo": cmd_geo, "gmaps": cmd_gmaps, "gpoi": cmd_gpoi, "poi": cmd_poi, "dist": cmd_dist, "brand": cmd_brand,
                        "images": cmd_images, "renders": cmd_renders, "run": cmd_run}[a.cmd](a, ctx)
             finally:
                 await b.close()

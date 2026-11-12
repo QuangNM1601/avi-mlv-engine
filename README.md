@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.4.0 | `mlv-engine-3.4.0.js` | `0651fa033b05a2ca902352b9e590c65da2d0098fbcd0040233941033459c17ad` |
 | 3.3.0 | `mlv-engine-3.3.0.js` | `465aae93193cad7455f377d88610dee3b88321754698f67bb5910798a06ea7c9` |
 | 3.2.0 | `mlv-engine-3.2.0.js` | `00d0f01b528189f36283477ecfb1ea80c1840bf9ae43789a884b4e93d5743f83` |
 | 3.1.2 | `mlv-engine-3.1.2.js` | `029fa54598a9af952b2d55c2a3187df2931efb9f0b08a3d260f828a1338d37f7` |
@@ -18,6 +19,13 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.4.0
+- Dựng nhanh gấp khoảng 12 lần: bộ lọc độ sáng áp 1 lần cho mỗi ô ảnh vệ tinh khi giải mã, không áp lại mỗi khung (1080p 1:1, 47 giây: 14 phút → 73 giây trên máy 2 nhân).
+- Nhãn tiện ích thêm 5 vị trí (dưới ghim, chéo trên, chéo dưới) cho điểm sát dự án; hết chồng nhãn ở 9:16.
+- Câu móc co theo khung: 16:9 không bị cắt dòng trên, 9:16 chữ lớn hơn.
+
+`scripts/mlv.py`: `gpoi` (tiện ích nổi bật theo Google Maps, 11 loại, xếp theo số đánh giá); `brand` đọc CSS trước (màu theo tần suất, bỏ màu mặc định thư viện; font chính + file; logo nhìn rõ nhất trên nền trắng, logo trắng → `plate` = màu chính), trình duyệt chỉ để chụp logo khi thiếu.
 
 ## 3.3.0
 | CFG | Làm gì |
