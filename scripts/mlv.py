@@ -12,7 +12,7 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   renders <url web dự án> --out DIR [--n 6]         ảnh phối cảnh lớn (≥1100 px, ngang) cho cảnh mở/kết
   run    cfg.json --out DIR [--frames auto|"4.5,10.6"] [--video] [--set k=v ...]
                                                      dựng: khung hình mẫu (JPEG) và/hoặc MP4 (tiếng AAC)
-                                                     --frames auto: khung mở + 1 khung/tiện ích + khung kết
+                                                     --frames auto: (khung 0 giây khi có hero/hook) + khung mở + 1 khung/tiện ích + khung kết
                                                      --set bright=0.5: ghi đè CFG không sửa file
   compose out.jpg "a.jpg|Nhãn A" "b.jpg|Nhãn B"... [--h 480] [--cols 4]   ghép ảnh có nhãn (lưới)
 
@@ -553,7 +553,7 @@ async def cmd_run(a, ctx):
             i0 = float(cfg.get("introDur") or (3.5 if cfg.get("brandMode") == "none" else 4))
             pd = float(started.get("poiDur") or cfg.get("poiDur") or 6)
             T = float(started.get("T") or 0)
-            ts = [round(i0 * .75, 1)] + [round(i0 + pd * k + pd - .7, 1) for k in range(len(cfg.get("pois", [])))] + ([round(T - 1.2, 1)] if T else [])
+            ts = ([0.0] if cfg.get("hero") or cfg.get("hook") else []) + [round(i0 * .75, 1)] + [round(i0 + pd * k + pd - .7, 1) for k in range(len(cfg.get("pois", [])))] + ([round(T - 1.2, 1)] if T else [])
         else:
             ts = [float(x) for x in a.frames.split(",") if x.strip()]
         res["times"] = ts
