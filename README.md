@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.6.0 | `mlv-engine-3.6.0.js` | `4ea9ce52570d5cc2673b8d72cc5c596a7417f3d4cd109c7d60d5e4103a960809` |
 | 3.5.0 | `mlv-engine-3.5.0.js` | `e8226a0952e95669b4cee7ffc608bdcf84ad8a7cd2eef2d1e5210099e0731cb2` |
 | 3.4.0 | `mlv-engine-3.4.0.js` | `0651fa033b05a2ca902352b9e590c65da2d0098fbcd0040233941033459c17ad` |
 | 3.3.0 | `mlv-engine-3.3.0.js` | `465aae93193cad7455f377d88610dee3b88321754698f67bb5910798a06ea7c9` |
@@ -20,6 +21,14 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.6.0
+| CFG | Làm gì |
+|---|---|
+| `beat` (giây/phách; `mlv.py run` tự lấy từ `words.json`) | Nhãn + ảnh tiện ích bật đúng phách gần 3,45 s nhất của mỗi cảnh, tiếng "pop" trùng lúc đó |
+
+`scripts/music.py`: `find` — bài Mixkit (Mixkit Free License: thương mại, quảng cáo online, không cần ghi nguồn) theo tâm trạng motivational / uplifting / hopeful / corporate, đo BPM, độ đều và độ mạnh phách (librosa), xếp hạng; `prep <id>` — cắt để phách mạnh đầu tiên rơi đúng 0 s, ghi `music.mp3` + `beats.json`.
+`scripts/tts.py`: `speed` (mặc định 1.25, rubberband giữ cao độ); có `beats.json` → độ dài cảnh mở / tiện ích / kết làm tròn theo ô nhịp, `hookDur` theo phách; VieNeu: bảng cách đọc (GO! → Gâu, AVI → A Vi, viết tắt tiếng Việt → chữ), in `g2p` (phiên âm tên tiếng Anh, viết tắt) và cờ đọc sai trước khi đọc, nghe lại bằng whisper tiếng Việt + tiếng Anh, đọc lại tối đa 6 lần. `tools/patch_360.py`: bản vá 3.5.0 → 3.6.0.
 
 ## 3.5.0
 | CFG | Làm gì |
@@ -106,7 +115,8 @@ Cấu hình kiểu 2.2 chạy y như cũ.
 | `scripts/check_voice.py voice.mp3 "tên"...` | Workspace của Claude (faster-whisper) | Nghe lại giọng đọc, báo tên tiếng Anh nào chưa đọc đúng |
 | `tools/brand-snippet.js` | Tab web chủ đầu tư (javascript_tool) | Trả JSON màu, font, logo; bản một dòng nằm trong SKILL.md |
 | `scripts/tts.py <thư mục>` | Workspace của Claude (VieNeu trong `~/mlv-tts`, hoặc edge-tts) + ffmpeg | `script.json` → `voice.mp3` + `words.json`, in `poiDur`, `introDur`, `outroDur` |
-| `scripts/vieneu_say.py spec.json` | `~/mlv-tts/bin/python` | Đọc các câu bằng VieNeu-TTS v3 Turbo (gọi từ tts.py) |
+| `scripts/vieneu_say.py spec.json` | `~/mlv-tts/bin/python` | Đọc các câu bằng VieNeu-TTS v3 Turbo (gọi từ tts.py); `--g2p` phiên âm |
+| `scripts/music.py find / prep` | Workspace của Claude (librosa + ffmpeg) | Nhạc truyền cảm hứng Mixkit + lưới phách `beats.json` |
 | `scripts/push_assets.sh <slug> <file...>` | Workspace của Claude | Đẩy logo/nhạc/giọng vào `assets/<slug>/`, in URL jsDelivr |
 | `scripts/merge_th.mjs <map.mp4> <talking.mp4>` | Máy người dùng (Node + ffmpeg) | Talking head mở → bản đồ → talking head chốt, −14 LUFS |
 
@@ -116,4 +126,4 @@ Thư mục `assets/<tên-dự-án>/`: logo, ảnh phối cảnh, nhạc riêng, 
 - Không sửa file đã phát hành. Bản mới = file mới (`mlv-engine-<phiên bản>.js`) trong commit mới, rồi cập nhật URL (theo mã commit) và SHA-256 trong SKILL.md.
 - Logo AVI Realty nhúng trong file là tài sản thương hiệu của AVI Realty, chỉ dùng cho nội dung của AVI Realty.
 - Dựa trên skill map-location-video của mktvantamland. Gói kèm mp4-muxer và webm-muxer (MIT, Vanilagy); giấy phép ở đầu file engine. Icon Maki (CC0, Mapbox).
-- Ảnh vệ tinh Esri/Maxar, dữ liệu OpenStreetMap (Overpass), tuyến đường OSRM, giọng Microsoft Edge (edge-tts), VieNeu-TTS (Apache-2.0, có watermark âm thanh mặc định) dùng theo điều khoản của từng nhà cung cấp.
+- Ảnh vệ tinh Esri/Maxar, dữ liệu OpenStreetMap (Overpass), tuyến đường OSRM, giọng Microsoft Edge (edge-tts), VieNeu-TTS (Apache-2.0, có watermark âm thanh mặc định), nhạc Mixkit (Mixkit Free License) dùng theo điều khoản của từng nhà cung cấp.

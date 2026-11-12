@@ -20,13 +20,13 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
 File cục bộ trong cfg.json (pois[].photo, markerUrl, brand.logo, brand.fontUrl, voice.url,
 voice.wordsUrl, music.url, hero.intro, hero.outro) được phục vụ cùng nguồn với trang engine, không cần đưa lên CDN;
 ảnh/logo/font là URL web được tải trước về <out>/_cache.
-Có voice.wordsUrl cục bộ (words.json của tts.py) → tự điền poiDur, introDur, outroDur còn thiếu trong cfg.
+Có voice.wordsUrl cục bộ (words.json của tts.py) → tự điền poiDur, introDur, outroDur còn thiếu trong cfg; hookDur (khớp phách nhạc) → hero.dur.
 """
 import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, subprocess, sys, time, urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.5.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.6.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -103,6 +103,12 @@ def localize(cfg, base):
             for k in ("poiDur", "introDur", "outroDur"):
                 if k in w and k not in cfg:
                     cfg[k] = w[k]
+            if w.get("hookDur") and cfg.get("hook"):  # cắt câu móc đúng phách nhạc
+                if isinstance(cfg.get("hero"), dict):
+                    cfg["hero"]["dur"] = w["hookDur"]
+                cfg["hookDur"] = w["hookDur"]
+            if w.get("beat") and "beat" not in cfg:  # bật ảnh/nhãn tiện ích đúng phách
+                cfg["beat"] = w["beat"]
         except Exception:
             pass
     if "markerUrl" in cfg:

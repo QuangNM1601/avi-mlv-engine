@@ -41,6 +41,15 @@ LEXICON = {
     "Mall": "Mo", "mall": "mo", "Land": "Len", "Park": "Pác", "City": "Xi ti", "Center": "Xen tơ",
     "Central": "Xen trồ", "Garden": "Ga đần", "View": "Viu", "Tower": "Tao ơ", "Sky": "Xờ cai",
 }
+SPEED = 1.25        # nhịp đọc mặc định: nhanh hơn 25 %, giữ cao độ (script.json "speed")
+# VieNeu: bộ phiên âm đọc tên tiếng Anh theo âm tiếng Anh; chỉ sửa tên thương hiệu đọc kiểu Việt và chữ viết tắt tiếng Việt
+VLEX = {
+    "GO!": "Gâu", "AVI Realty": "A Vi Realty", "AVI": "A Vi", "KCNC": "khu công nghệ cao", "KCN": "khu công nghiệp",
+    "BV": "bệnh viện", "ĐHQG": "Đại học Quốc gia", "TP.HCM": "Thành phố Hồ Chí Minh", "TP. HCM": "Thành phố Hồ Chí Minh",
+    "CĐT": "chủ đầu tư", "Becamex": "Bê ca mếch", "VSIP": "Vi xíp",
+}
+OK_ABBR = {"TBS"}   # viết tắt đọc từng chữ cái tiếng Anh là đúng
+ROUNDS, COPIES = 4, 4   # VieNeu: câu có tên tiếng Anh đọc lại tới khi whisper tiếng Việt VÀ tiếng Anh cùng nghe đúng: 1 + 3×4 = tối đa 13 bản
 # Ngữ điệu "song-dong": mỗi câu một mức cao độ / tốc độ khác nhau để giọng bớt đều đều
 STYLE = {
     "intro": ("+8%", "+8Hz"),
@@ -86,7 +95,7 @@ VIENEU_PY = Path(os.environ.get("MLV_TTS_PY", str(Path.home() / "mlv-tts" / "bin
 TRIM = "silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse"
 
 
-def vieneu_lines(items, voice, tmp):
+def vieneu_lines(items, voice, tmp, speed=1.0):
     """items: [(key, text)] → {key: wav đã cắt lặng 2 đầu}. Nạp mô hình 1 lần cho cả kịch bản."""
     spec = {"voice": voice, "lines": [{"text": t, "out": str(tmp / f"{k}.raw.wav")} for k, t in items]}
     sp = tmp / "vieneu.json"
@@ -99,12 +108,41 @@ def vieneu_lines(items, voice, tmp):
     out = {}
     for k, _ in items:
         f = tmp / f"{k}.wav"
-        run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / f"{k}.raw.wav"), "-af", TRIM, "-ar", "48000", str(f)])
+        af = TRIM + (f",rubberband=tempo={speed:.3f}" if abs(speed - 1) > .01 else "")
+        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / f"{k}.raw.wav"), "-af", af, "-ar", "48000", str(f)], capture_output=True, text=True)
+        if r.returncode:  # ffmpeg không có rubberband → atempo
+            run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / f"{k}.raw.wav"), "-af", TRIM + (f",atempo={speed:.3f}" if abs(speed - 1) > .01 else ""), "-ar", "48000", str(f)])
         out[k] = f
     return out
 
 
 _WM = None
+
+
+def g2p_audit(lines_spoken):
+    """Phiên âm mọi cụm chữ Latinh không dấu trước khi đọc; cờ: tên tiếng Anh bị đọc kiểu Việt, viết tắt bị đọc từng chữ cái tiếng Anh."""
+    toks = set()
+    for t in lines_spoken:
+        for m in re.findall(r"(?<![\wÀ-ỹ])[A-Za-z][A-Za-z.!'-]*(?:\s+[A-Z][A-Za-z.!'-]*)*(?![\wÀ-ỹ])", t):
+            m = m.strip(".!")
+            if m and (any(is_en(w) for w in m.split()) or re.search(r"[A-Z]{2,}", m)):
+                toks.add(m)
+    if not toks:
+        return {}, []
+    r = subprocess.run([str(VIENEU_PY), str(Path(__file__).with_name("vieneu_say.py")), "--g2p", json.dumps(sorted(toks), ensure_ascii=False)],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    try:
+        ph = json.loads(r.stdout.strip().splitlines()[-1])
+    except Exception:
+        return {}, ["Không kiểm được phiên âm (sea_g2p)"]
+    flags = []
+    for t, p in ph.items():
+        if any(is_en(w) for w in t.split() if not re.fullmatch(r"[A-Z]{2,}", w)) and re.search(r"[1-7]", p):
+            flags.append(f"{t}: đọc kiểu tiếng Việt ({p}) → thêm \"say\"")
+        for w in re.findall(r"\b[A-Z]{2,}\b", t):
+            if w not in OK_ABBR:
+                flags.append(f"{w}: đọc từng chữ cái tiếng Anh ({ph.get(t)}) → viết ra chữ trong \"say\" nếu là viết tắt tiếng Việt")
+    return ph, flags
 
 
 def align(path):
@@ -121,6 +159,15 @@ def align(path):
                                        capture_output=True).stdout, np.float32)
     segs, _ = _WM.transcribe(pcm, language="vi", beam_size=5, word_timestamps=True, vad_filter=False)
     return [(w.start, w.end, w.word.strip()) for sg in segs for w in (sg.words or []) if w.word.strip()]
+
+
+def heard_en(path):
+    """Nghe lại bằng whisper tiếng Anh (tên tiếng Anh bị mô hình tiếng Việt nghe lệch)."""
+    import numpy as np
+    pcm = np.frombuffer(subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(path), "-f", "f32le", "-ac", "1", "-ar", "16000", "-"],
+                                       capture_output=True).stdout, np.float32)
+    segs, _ = _WM.transcribe(pcm, language="en", beam_size=5)
+    return " ".join(sg.text for sg in segs)
 
 
 async def synth(text, voice, rate, out, pitch="+0Hz"):
@@ -212,9 +259,12 @@ async def main():
     voice = s.get("voice") or ("Đức Trí" if engine == "vieneu" else "vi-VN-NamMinhNeural")
     if engine == "edge" and not voice.startswith("vi-VN-"):
         voice = "vi-VN-HoaiMyNeural" if voice in ("Thục Đoan", "Mỹ Duyên", "Kim Thanh", "Thùy Dung") else "vi-VN-NamMinhNeural"
-    rate = s.get("rate", "+0%")
+    rate = s.get("rate", "")
+    speed = float(s.get("speed", SPEED))
     brand = s.get("brand", True)
-    lex = {**(LEXICON if engine == "edge" else {}), **(s.get("say") or {})}
+    lex = {**(LEXICON if engine == "edge" else VLEX), **(s.get("say") or {})}
+    bj = d / "beats.json"
+    beats = json.loads(bj.read_text(encoding="utf-8")) if bj.exists() and s.get("beatSync", True) else None
     lively = s.get("style", "song-dong") != "deu"
     pois = [p.strip() for p in s.get("pois", []) if p and p.strip()]
     if not (1 <= len(pois) <= 6):
@@ -227,42 +277,59 @@ async def main():
             die("Thiếu gói edge-tts: pip install edge-tts")
 
     tmp = Path(tempfile.mkdtemp(prefix="mlv_tts_"))
+    g2p = {}
     lines = [("intro", s.get("intro", ""))] + [(f"poi{i+1}", t) for i, t in enumerate(pois)] + [("outro", s.get("outro", ""))]
     res = {}
     if engine == "vieneu":
-        # VieNeu đọc ngẫu nhiên đôi chút: câu có tên tiếng Anh mà whisper nghe sai thì đọc lại (tối đa 3 lần), giữ bản nghe đúng
-        names = set(s.get("check") or []) | {m for m in re.findall(r"(?<![\wÀ-ỹ])[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*(?![\wÀ-ỹ])", " ".join(t for _, t in lines))
-                                             if any(is_en(w) for w in m.split())}
+        # VieNeu đọc ngẫu nhiên đôi chút (giọng miền Nam hay nuốt âm cuối tên tiếng Anh): câu có tên tiếng Anh mà whisper nghe sai thì đọc lại (tối đa 13 bản), giữ bản nghe đúng
+        def en_names(t):  # tên tiếng Anh còn lại trong câu sẽ đọc (sau bảng cách đọc)
+            return {m for m in re.findall(r"(?<![\wÀ-ỹ])[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*(?![\wÀ-ỹ])", t)
+                    if any(is_en(w) for w in m.split())} | {n for n in (s.get("check") or []) if n in t}
         norm = lambda x: re.sub(r"[^a-z0-9]", "", x.lower())
         todo = [(k, spoken(t.strip(), lex)) for k, t in lines if t.strip()]
-        for rnd in range(3):
+        g2p, gflags = g2p_audit([t for _, t in todo])
+        warn += gflags
+        takes = 0
+        for rnd in range(ROUNDS):
             rd = tmp / f"r{rnd}"
             rd.mkdir()
-            files = vieneu_lines(todo, voice, rd)
+            n = 1 if rnd == 0 else COPIES  # vòng sau: mỗi câu lỗi đọc COPIES bản trong 1 lần nạp mô hình
+            batch = [(f"{k}~{j}", sp_) for k, sp_ in todo for j in range(n)]
+            files = vieneu_lines(batch, voice, rd, speed)
+            takes += n
             miss = []
             for k, sp_ in todo:
-                w = align(files[k])
-                heard = norm(" ".join(x[2] for x in w))
-                bad = [n for n in names if n in dict(lines)[k] and norm(n) not in heard]
-                if k not in res or not bad:
-                    res[k] = {"file": files[k], "dur": duration(files[k]), "words": w, "text": dict(lines)[k].strip(), "bad": bad}
-                if bad:
+                for j in range(n):
+                    f = files[f"{k}~{j}"]
+                    w = align(f)
+                    heard = norm(" ".join(x[2] for x in w))
+                    names_k = en_names(sp_)
+                    he = norm(heard_en(f)) if names_k else ""
+                    # chỉ giữ bản mà cả whisper tiếng Việt lẫn tiếng Anh đều nghe đúng tên (bản "lưng chừng" bị loại)
+                    bad = [nm for nm in names_k if norm(nm) not in heard or norm(nm) not in he]
+                    if k not in res or not bad:
+                        res[k] = {"file": f, "dur": duration(f), "words": w, "text": dict(lines)[k].strip(), "bad": bad}
+                    if not bad:
+                        break
+                if res[k]["bad"]:
                     miss.append((k, sp_))
             todo = miss
             if not todo:
                 break
         for k in todo:
-            warn.append(f"{k[0]}: whisper chưa nghe đúng {res[k[0]]['bad']} sau 3 lần đọc — nghe lại hoặc thêm \"say\"")
+            warn.append(f"{k[0]}: whisper chưa nghe đúng {res[k[0]]['bad']} sau {takes} lần đọc — nghe lại; tên đặt đầu câu ngắn hoặc thêm \"say\"")
     for key, text in lines:
         if not text.strip() or engine != "edge":
             continue
         f = tmp / f"{key}.mp3"
         words, err = [], ""
-        r, ptch = rate, "+0Hz"
+        base = int(round((speed - 1) * 100))
+        r, ptch = f"{base:+d}%", "+0Hz"
         if lively:
-            r, ptch = STYLE["intro"] if key == "intro" else STYLE["outro"] if key == "outro" else STYLE["poi"][(int(key[3:]) - 1) % len(STYLE["poi"])]
-            if rate not in ("+0%", "0%"):
-                r = rate
+            sr_, ptch = STYLE["intro"] if key == "intro" else STYLE["outro"] if key == "outro" else STYLE["poi"][(int(key[3:]) - 1) % len(STYLE["poi"])]
+            r = f"{base + int(sr_.rstrip('%')):+d}%"
+        if rate:
+            r = rate
         for attempt in range(4):
             try:
                 words = await synth(spoken(text.strip(), lex), voice, r, f, ptch)
@@ -291,7 +358,25 @@ async def main():
         if outro_len > SCENE_MAX:
             too_long.append(f"outro: {res['outro']['dur']:.1f}s (tối đa {SCENE_MAX - LEAD_OUT - TAIL_END - 0.6:.1f}s)")
     if too_long:
-        die("Câu quá dài, rút gọn rồi chạy lại (không tăng tốc giọng)", long=too_long)
+        die("Câu quá dài, rút gọn rồi chạy lại (không tăng tốc giọng thêm)", long=too_long)
+
+    hook_dur = None
+    if beats:  # cắt cảnh đúng phách: độ dài cảnh = bội số ô nhịp (hoặc 2 phách, 1 phách khi không vừa)
+        bt, bar = float(beats["beat"]), float(beats["bar"])
+
+        def q(x, lo, hi):
+            for u in (bar, 2 * bt, bt):
+                n = max(1, -(-max(x, lo) // u))
+                if n * u <= hi + 1e-6:
+                    return round(n * u, 3)
+            return round(min(hi, max(lo, x)), 3)
+        poi_dur = q(poi_dur, POI_MIN, POI_MAX)
+        intro_len = q(intro_len, 3.0, SCENE_MAX)
+        outro_len = q(outro_len, 3.5, SCENE_MAX)
+        k = max(1, round(3.0 / (2 * bt)))
+        hook_dur = round(min(3.8, max(2.4, k * 2 * bt)), 3)
+        if hook_dur > 3.8 or hook_dur < 2.4:
+            hook_dur = round(bt * round(3.0 / bt), 3)
 
     T = intro_len + poi_dur * len(pois) + outro_len
     starts = {"intro": LEAD_INTRO, "outro": intro_len + poi_dur * len(pois) + LEAD_OUT}
@@ -315,10 +400,14 @@ async def main():
     caps = []
     for k in keys:
         caps += chunks(res[k]["text"], res[k]["words"], starts[k], res[k]["dur"])
-    (d / "words.json").write_text(json.dumps({"T": round(T, 2), "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "caps": caps}, ensure_ascii=False), encoding="utf-8")
+    wj = {"T": round(T, 2), "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "speed": speed, "caps": caps}
+    if hook_dur:
+        wj.update(hookDur=hook_dur, bpm=beats["bpm"], beat=float(beats["beat"]))
+    (d / "words.json").write_text(json.dumps(wj, ensure_ascii=False), encoding="utf-8")
     if not any(res[k]["words"] for k in keys):
         warn.append("Không có mốc từ; phụ đề chia đều theo số từ")
-    print(json.dumps({"ok": True, "engine": engine, "voiceName": voice, "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "T": round(T, 2), "voice": str(out_mp3), "words": str(d / "words.json"), "warn": warn}, ensure_ascii=False))
+    print(json.dumps({"ok": True, "engine": engine, "voiceName": voice, "speed": speed, "beatSync": bool(beats), "hookDur": hook_dur,
+                      "g2p": g2p if engine == "vieneu" else {}, "poiDur": poi_dur, "introDur": intro_len, "outroDur": outro_len, "T": round(T, 2), "voice": str(out_mp3), "words": str(d / "words.json"), "warn": warn}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

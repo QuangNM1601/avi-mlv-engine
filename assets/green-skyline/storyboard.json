@@ -1,6 +1,6 @@
 {
  "slug": "green-skyline",
- "engine": "mlv-engine 3.5.0",
+ "engine": "mlv-engine 3.6.0",
  "project": {
   "name": "Green Skyline",
   "developer": "TBS Group / TBS Land",
@@ -148,7 +148,13 @@
   "formats": [
    "9:16"
   ],
-  "music": "sang-trong",
+  "music": {
+   "mixkit": 33,
+   "title": "Motivating Mornings",
+   "author": "Ahjay Stelino",
+   "bpm": 120.99,
+   "license": "Mixkit Free License (thương mại, quảng cáo online, không cần ghi nguồn)"
+  },
   "marker": "logo",
   "res": 1080,
   "brandMode": "project",
@@ -196,7 +202,8 @@
    "Nửa đêm con sốt? Bệnh viện Hoàn Mỹ ngay sát bên.",
    "Cuối tuần về quê, bốn mươi bốn phút tới sân bay Tân Sơn Nhất."
   ],
-  "outro": "Tiện trong một phút, đi làm dưới hai mươi phút. Green Skyline, mời bạn xem nhà thật!"
+  "outro": "Tiện trong một phút, đi làm dưới hai mươi phút. Green Skyline, mời bạn xem nhà thật!",
+  "speed": 1.25
  },
  "story": {
   "frame": "Một ngày ở Green Skyline",
