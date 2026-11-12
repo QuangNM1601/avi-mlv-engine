@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.7.0 | `mlv-engine-3.7.0.js` | `c003ef1f383771e92e3d4df1d1d5c0843a23b6615fec2f47326580ff4c512be5` |
 | 3.6.0 | `mlv-engine-3.6.0.js` | `4ea9ce52570d5cc2673b8d72cc5c596a7417f3d4cd109c7d60d5e4103a960809` |
 | 3.5.0 | `mlv-engine-3.5.0.js` | `e8226a0952e95669b4cee7ffc608bdcf84ad8a7cd2eef2d1e5210099e0731cb2` |
 | 3.4.0 | `mlv-engine-3.4.0.js` | `0651fa033b05a2ca902352b9e590c65da2d0098fbcd0040233941033459c17ad` |
@@ -21,6 +22,12 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.7.0
+- `travel:'moto'`: tuyến hồ sơ xe đạp dài hơn 1,6 lần tuyến ô tô (kẹt ở đại lộ cấm xe đạp → vòng 25–30 km) → dùng tuyến ô tô, thời gian vẫn theo tốc độ xe máy; `pois[].route:'car'` ép tuyến ô tô. `mlv.py dist` cùng quy tắc (`via`).
+- Câu móc trên bản đồ: chữ đặt ở chỗ trống — tiện ích nằm trên ghim dự án → chữ dưới ghim; 1:1, 16:9 không đủ chỗ trên/dưới → chữ nửa trái hoặc phải, phía ít ghim hơn.
+
+`scripts/tts.py`: từ không phải 1 âm tiết tiếng Việt (vd Setia, Edenia, Lotte) được coi là tên nước ngoài để kiểm; bảng cách đọc thêm Lotte Mart → Lốt tê Mát, AEON Mall → Ê ôn Mo, golf → gôn.
 
 ## 3.6.0
 | CFG | Làm gì |

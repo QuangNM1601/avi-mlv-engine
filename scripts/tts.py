@@ -46,7 +46,7 @@ SPEED = 1.25        # nhịp đọc mặc định: nhanh hơn 25 %, giữ cao đ
 VLEX = {
     "GO!": "Gâu", "AVI Realty": "A Vi Realty", "AVI": "A Vi", "KCNC": "khu công nghệ cao", "KCN": "khu công nghiệp",
     "BV": "bệnh viện", "ĐHQG": "Đại học Quốc gia", "TP.HCM": "Thành phố Hồ Chí Minh", "TP. HCM": "Thành phố Hồ Chí Minh",
-    "CĐT": "chủ đầu tư", "Becamex": "Bê ca mếch", "VSIP": "Vi xíp",
+    "CĐT": "chủ đầu tư", "Becamex": "Bê ca mếch", "VSIP": "Vi xíp", "Lotte Mart": "Lốt tê Mát", "Lotte": "Lốt tê", "AEON Mall": "Ê ôn Mo", "AEON": "Ê ôn", "golf": "gôn",
 }
 OK_ABBR = {"TBS"}   # viết tắt đọc từng chữ cái tiếng Anh là đúng
 ROUNDS, COPIES = 4, 4   # VieNeu: câu có tên tiếng Anh đọc lại tới khi whisper tiếng Việt VÀ tiếng Anh cùng nghe đúng: 1 + 3×4 = tối đa 13 bản
@@ -66,9 +66,14 @@ def spoken(text, lex):
     return text
 
 
+VN_SYL = re.compile(r"(ngh|ng|nh|ch|gh|gi|kh|ph|qu|th|tr|[bcdghklmnprstvx])?[aeiouy]{1,3}(ch|ng|nh|[cmnpt])?")
+
+
 def is_en(w):
-    """Từ ASCII không theo chính tả tiếng Việt (tên tiếng Anh, viết tắt) → cần kiểm cách đọc."""
+    """Từ ASCII không phải 1 âm tiết tiếng Việt (tên tiếng Anh, Mã Lai…, viết tắt) → cần kiểm cách đọc."""
     if re.fullmatch(r"[A-Z]{2,}", w):
+        return True
+    if re.fullmatch(r"[A-Za-z]+", w) and not VN_SYL.fullmatch(w.lower()):
         return True
     w = w.lower()
     return bool(re.search(r"[fjwz]|ee|oo|ea", w) or re.match(r"(bl|br|cl|cr|dr|fl|fr|gl|gr|pl|pr|sc|sk|sl|sm|sn|sp|st|sw|tw|wh|sh)", w)

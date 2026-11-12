@@ -1,0 +1,246 @@
+{
+ "slug": "setia-edenia",
+ "engine": "mlv-engine 3.7.0",
+ "project": {
+  "name": "Setia Edenia",
+  "developer": "Setia Lái Thiêu (S P Setia Berhad, Malaysia)",
+  "address": "Đại lộ Bình Dương (QL13), phường Lái Thiêu, TP.HCM — trong khu đô thị EcoXuân",
+  "lat": 10.9106816,
+  "lon": 106.7116655,
+  "scale": "0,86 ha · 3 tháp 27–28 tầng · 865 căn",
+  "status": "Khởi công 07/2025; mục tiêu hoàn thành 2027",
+  "price": "45–48 triệu/m² (tham khảo)"
+ },
+ "cfg": {
+  "name": "Setia Edenia",
+  "area": "LÁI THIÊU · TP.HCM",
+  "intro": [
+   "SETIA",
+   "EDENIA"
+  ],
+  "subtitle": "865 căn · Hoàn thành 2027",
+  "tagline": "Thiết yếu trong 10 phút",
+  "hotline": "0965.909.339",
+  "project": {
+   "lat": 10.9106816,
+   "lon": 106.7116655
+  },
+  "pois": [
+   {
+    "cat": "MUA SẮM",
+    "name": "LOTTE Mart Bình Dương",
+    "lat": 10.9055313,
+    "lon": 106.7113389,
+    "tag": "2 PHÚT · ĐI CHỢ",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdop6k1EjGe4YXYT6OspoeismCNVv4yaW6hKVLGRhOc5j1JLOYGgNrep56Lck8CXfc18w8_yNllg6tlCo5ALd5JlIP8EBSXtua42FfInkxPXfeyP7Xkdn9d36djwzOHHjUpMkUmOw8j0wIf=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/LOTTE+Mart+B%C3%ACnh+D%C6%B0%C6%A1ng/@10.9055313,106.7113389,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLc-5NYa4k1EjEomT0Z7Gl3E4smAQp2077cJRLjf9vr-2oUeXjgpcvV1wbIhehGQ0n_wJJx0qqJHLzr-lnEeR0SdYJcvL7qHlXZc9xdE-o2ZKS1IrMw3auao7r5EE0u2frrZXRN1kg=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/LOTTE+Mart+B%C3%ACnh+D%C6%B0%C6%A1ng/@10.9055313,106.7113389,17z"
+     }
+    },
+    "pick": "A"
+   },
+   {
+    "cat": "Y TẾ",
+    "name": "BV Quốc tế Becamex",
+    "lat": 10.9041605,
+    "lon": 106.7102107,
+    "tag": "4 PHÚT · KHÁM BỆNH",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLc_KtJq_OFuiJ2imJux9ZqBScFDvh97l0TMPp-EQVieVppAEnaX1KHOl8nED3Xxe63yG2BYmX1rNEdt8Q78JPv5EBpblTTpMMOMG9EetNy_Ix1zdjNRXNrAGpCkMdcCsJ2yo4CBdQ=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Qu%E1%BB%91c+t%E1%BA%BF+Becamex/@10.9041605,106.7102107,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLfWX7LY674LoNADAWrlOjfjaHD615rwrC21suM4z6_oWBu3sroIBkdYu1WB9LG3Fhg8OZTWIc5UjQeAhaRNjUSMmiCoLl-qL4yzLUlTzNpw-FXwLrN-7W1TZvsYjBQmOkntkLvqHA=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Qu%E1%BB%91c+t%E1%BA%BF+Becamex/@10.9041605,106.7102107,17z"
+     }
+    },
+    "pick": "A"
+   },
+   {
+    "cat": "KCN",
+    "name": "KCN VSIP 1",
+    "lat": 10.9243858,
+    "lon": 106.7135795,
+    "tag": "6 PHÚT · ĐI LÀM",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLe2m9Go7dQyAQAhsAFC403zGIqvh_l5pEI7sUgdYEjZWfivNHhP69RZwwRXi-iST8F2tYCqq9Jgtfdfl0PZGDG7vgN8SkXI-NQsdDttWtKf75lGGkxEBxUpn75yHRXg8jGOTU-f8_1Tiy-v=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+VSIP+1/@10.9243858,106.7135795,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RvmXuDKCOzCQZGCM13Dnx4JTHB_r1d-hlX5_tnBvwkjtLI9hBvviechy7OpZ5vUZ9-vHuovLPUd8H1NXb8QzX7fGQNO2fMsx_5cpF4rY4cb8VxtXvnmGF2_a3Bb7U0-n2KEOHR_g=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+VSIP+1/@10.9243858,106.7135795,17z"
+     }
+    },
+    "pick": "A"
+   },
+   {
+    "cat": "MUA SẮM",
+    "name": "AEON Mall Canary",
+    "lat": 10.9327438,
+    "lon": 106.711585,
+    "tag": "8 PHÚT · CUỐI TUẦN",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdrvZMYmF_qvmLLS62Etjpm8DPpCYzxLCRA79dmxi2Oq5C8L7EHlqA8uGCTz3uKxMINeO1Kq_5pTZf-oGgErwUPRcUi3VZzA7VFx_FZF97TvUcpath-Qn_lmMav-3hEGMlA-eyHjposX08=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/AEON+MALL+B%C3%ACnh+D%C6%B0%C6%A1ng+Canary./@10.9327438,106.7093319,18z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdDw352tfKPQwrU_NzUoeG2w1EqZCLkRIhJJxaV48QdQh0qOJdS7mV41EilPjTEHsjczqPsalyapFSGw6BQO_55-DMGsI6_yu1l9yjoMZ5QEwhl4YL4ToG0oJLXx0sWV8qJUmAjwPbEt8A=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/AEON+MALL+B%C3%ACnh+D%C6%B0%C6%A1ng+Canary./@10.9327438,106.7093319,18z"
+     }
+    },
+    "pick": "A"
+   },
+   {
+    "cat": "THỂ THAO",
+    "name": "Sân golf Sông Bé",
+    "lat": 10.9250822,
+    "lon": 106.7060275,
+    "tag": "10 PHÚT · CHƠI GOLF",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdhmjsK305zgnnCyHgAz9cbcAClRJFNYacUNdtpMI2-6GZLV5iMbY77bXVxfBMp37UPPtNb6nvN34z5NFqgILEzgGSDr6-aaozsCxiW2aHtEdABzAwMKP0Gouuv1jRad5tEVWes=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/S%C3%B4ng+B%C3%A9+Golf+Resort/@10.9250822,106.7060275,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeSVQc-_eQACGT4Gw4zEFasB46l3202farjTH4fcnUA_saxUygdTP2uELcbcULnr2Mtmp6xy4E10XN_tX33eWpStDXlZZh5kLt4402SKCeAE_KIEk38KmHJUxhOswrbq_MwymdFIs7mX-aF=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/S%C3%B4ng+B%C3%A9+Golf+Resort/@10.9250822,106.7060275,17z"
+     }
+    },
+    "pick": "A"
+   },
+   {
+    "cat": "KẾT NỐI",
+    "name": "Sân bay Tân Sơn Nhất",
+    "lat": 10.81193,
+    "lon": 106.6537382,
+    "icon": "airport",
+    "tag": "41 PHÚT · ĐI XA",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdR1PwVEZodwUGnxllIVazmAuhmvpdbCO2cApiKfGpE0Uj8x4DQzedn5Z-OoUIBJNb3E4R-PWL7b88y3lRhfCmxZ48HbES044vFGlq-HsZmFs6prH5l4yvRy4Aog_uq9m-WvX3BvKsq1jyS=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/S%C3%A2n+bay+T%C3%A2n+s%C6%A1n+nh%E1%BA%A5t+TPHCM/@10.81193,106.644726,16z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdqp59LaDwZObOPSYYDR1pRb2S8HoRN5G0F8tGeb19iO5SDA7dMOQ_4SwHZBJUHu-8-UHgMqjeYrEg76T5XWHWCoCWc-eR65rDomZbJzMRfcbnl7WdoP_T00b_x2vA8ei0PkjB_hC9uzckS=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/S%C3%A2n+bay+T%C3%A2n+s%C6%A1n+nh%E1%BA%A5t+TPHCM/@10.81193,106.644726,16z"
+     }
+    },
+    "pick": "A"
+   }
+  ],
+  "formats": [
+   "1:1"
+  ],
+  "music": {
+   "mixkit": 77,
+   "title": "Running Out of Time",
+   "author": "Ahjay Stelino",
+   "bpm": 130.01,
+   "skipBars": 1,
+   "license": "Mixkit Free License (thương mại, quảng cáo online, không cần ghi nguồn)"
+  },
+  "marker": "logo",
+  "res": 1080,
+  "brandMode": "project",
+  "brand": {
+   "name": "Setia Edenia",
+   "primary": "#7A1F35",
+   "accent": "#F2C6CF",
+   "font": "Be Vietnam Pro",
+   "logo": "assets/setia-edenia/logo.png (biểu tượng cắt từ logo chữ)",
+   "fontUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/bevietnampro/BeVietnamPro-SemiBold.ttf"
+  },
+  "captions": true,
+  "bright": 1,
+  "roads": true,
+  "travel": "moto",
+  "bgBlur": 0,
+  "hero": {
+   "intro": "https://i.ex-cdn.com/theleader.vn/files/content/2025/12/18/175956-3261.jpg",
+   "outro": "https://i.ex-cdn.com/theleader.vn/files/content/2025/12/18/175956-3261.jpg",
+   "dur": 3
+  },
+  "hookBg": "map",
+  "hookPoi": 0,
+  "hook": [
+   "2 PHÚT",
+   "TỚI LOTTE MART",
+   "SETIA EDENIA · S P SETIA · HOÀN THÀNH 2027"
+  ]
+ },
+ "script": {
+  "engine": "vieneu",
+  "voice": "Đức Trí",
+  "speed": 1.25,
+  "brand": true,
+  "say": {
+   "Setia Edenia": "Sê ti a Ê đê ni a"
+  },
+  "intro": "Lotte Mart chỉ cách hai phút. Mọi thứ thiết yếu đều trong mười phút quanh Setia Edenia.",
+  "pois": [
+   "Hai phút, tan làm ghé Lotte Mart mua đồ cho cả nhà.",
+   "Bốn phút, Bệnh viện Quốc tế Becamex khi cả nhà cần khám.",
+   "Sáu phút, tới chỗ làm ở Khu công nghiệp VSIP một.",
+   "Tám phút, cuối tuần cả nhà dạo AEON Mall.",
+   "Mười phút, sáng chủ nhật ra sân golf Sông Bé.",
+   "Đi xa? Bốn mươi mốt phút tới sân bay Tân Sơn Nhất."
+  ],
+  "outro": "Thiết yếu trong mười phút. Setia Edenia, liên hệ nhận bảng giá hôm nay!"
+ },
+ "story": {
+  "frame": "Vòng bán kính",
+  "message": "Thiết yếu trong 10 phút",
+  "backup": "Một ngày ở Setia Edenia",
+  "hooks": {
+   "A": {
+    "hook": [
+     "2 PHÚT",
+     "TỚI LOTTE MART",
+     "SETIA EDENIA · S P SETIA · HOÀN THÀNH 2027"
+    ],
+    "hookPoi": 0,
+    "say": "Lotte Mart chỉ cách hai phút.",
+    "score": 5
+   },
+   "B": {
+    "hook": [
+     "6 PHÚT",
+     "TỚI KCN VSIP 1",
+     "SETIA EDENIA · S P SETIA · HOÀN THÀNH 2027"
+    ],
+    "hookPoi": 2,
+    "say": "Làm ở VSIP? Về nhà chỉ sáu phút.",
+    "score": 5
+   },
+   "C": {
+    "hook": [
+     "NHÀ CÓ NGƯỜI ỐM?",
+     "BV QUỐC TẾ CÁCH 4 PHÚT",
+     "SETIA EDENIA · S P SETIA · HOÀN THÀNH 2027"
+    ],
+    "hookPoi": 1,
+    "say": "Nhà có người ốm? Bệnh viện quốc tế chỉ bốn phút.",
+    "score": 5
+   },
+   "D": {
+    "hook": [
+     "HƠN 50 NĂM",
+     "CHỦ ĐẦU TƯ MALAYSIA",
+     "SETIA EDENIA · S P SETIA · HOÀN THÀNH 2027"
+    ],
+    "hookBg": "hero",
+    "say": "Hơn năm mươi năm kinh nghiệm từ Malaysia.",
+    "score": 5
+   }
+  },
+  "pick": "A"
+ }
+}

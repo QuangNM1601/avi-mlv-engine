@@ -26,7 +26,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.6.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.7.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -303,6 +303,13 @@ async def moto_dist(ctx, lat, lon, pois):
         try:
             r = await ctx.request.get(u, timeout=20000)
             km = (await r.json())["routes"][0]["distance"] / 1000
+            try:  # hồ sơ xe đạp hay kẹt ở đại lộ cấm xe đạp → đường vòng rất xa; dài hơn 1,6 lần tuyến ô tô thì lấy tuyến ô tô
+                rc = await ctx.request.get(f"https://router.project-osrm.org/route/v1/driving/{lon},{lat};{p['lon']},{p['lat']}?overview=false", timeout=20000)
+                kc = (await rc.json())["routes"][0]["distance"] / 1000
+                if kc * 1.6 < km:
+                    km, q["via"] = kc, "tuyến ô tô (xe đạp đi vòng)"
+            except Exception:
+                pass
         except Exception:
             import math
             km = math.hypot((p["lat"] - lat) * 111.2, (p["lon"] - lon) * 111.2 * math.cos(math.radians(lat))) * 1.3
