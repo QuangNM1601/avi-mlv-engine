@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.1.1 | `mlv-engine-3.1.1.js` | `68f4f8794f781cecb11e85bb86b8b112c25910b0acbfe92ad800586913a8c544` |
 | 3.1.0 | `mlv-engine-3.1.0.js` | `a9998d2c95cac87c9fb99bd41e450893f4e72dec97b78b4b96b4acd8b279de9e` |
 | 3.0.2 | `mlv-engine-3.0.2.js` | `0c4ce7f52c3c30fe1e4ce4cc2b88f32db20706d9d59dcd76d531b0b13c597bf1` |
 | 3.0.1 | `mlv-engine-3.0.1.js` | `8fdcaf3f5bb60970e9cbe322b38c92802b4aa4a71c07b24bc1bc040824e6ea1e` |
@@ -14,6 +15,10 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.1.1
+- Website AVI Realty: avirealty.com → avirealty.vn.
+- `mlv.py images`: thêm nguồn ảnh địa điểm Google Maps (`--place`), Bing/DDG lỗi không làm dừng lệnh.
 
 ## 3.1.0
 | CFG / API | Làm gì |

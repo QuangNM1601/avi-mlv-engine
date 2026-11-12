@@ -7,7 +7,8 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   poi    LAT LON [--km 3] [--dist]                   ứng viên tiện ích (MLV.poi) [+ km/phút]
   dist   LAT LON --pois pois.json                    km/phút đường lái xe (OSRM Table)
   brand  <url web dự án> --out DIR                   màu, font (tải file), logo (logo.png)
-  images "<từ khóa>" --out DIR --prefix p1 [--n 2]   tìm + tải ảnh web, giữ n ảnh tốt nhất
+  images "<từ khóa>" --out DIR --prefix p1 [--n 2] [--place "<tên, tỉnh>"]
+                                                     tìm + tải ảnh web (Bing, ảnh địa điểm Google Maps, DDG), giữ n ảnh
   run    cfg.json --out DIR [--frames auto|"4.5,10.6"] [--video] [--set k=v ...]
                                                      dựng: khung hình mẫu (JPEG) và/hoặc MP4 (tiếng AAC)
                                                      --frames auto: khung mở + 1 khung/tiện ích + khung kết
@@ -23,7 +24,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.1.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.1.1.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -310,6 +311,49 @@ async def _search_bing(ctx, q):
     return res
 
 
+async def _search_gmaps(ctx, q):
+    """Ảnh của địa điểm trên Google Maps (ảnh đại diện + ảnh trong khung xem ảnh), cỡ lớn."""
+    pg = await ctx.new_page()
+    res = []
+    try:
+        await pg.goto("https://www.google.com/maps/search/" + urllib.parse.quote(q) + "?hl=vi", wait_until="domcontentloaded", timeout=30000)
+        if "consent." in pg.url:  # chọn phương án ít chia sẻ dữ liệu nhất
+            for t in ("Reject all", "Từ chối tất cả"):
+                b = pg.get_by_role("button", name=t)
+                if await b.count():
+                    await b.first.click(); break
+        await pg.wait_for_timeout(5000)
+        if "/maps/place/" not in pg.url:
+            first = pg.locator('a[href*="/maps/place/"]').first
+            if await first.count():
+                await first.click(); await pg.wait_for_timeout(4500)
+        page = pg.url.split("/data=")[0] if "/maps/place/" in pg.url else pg.url
+        grab = "els => els.filter(e => (e.naturalWidth||0) >= 120).map(e => e.src).filter(u => /googleusercontent\\.com|ggpht\\.com/.test(u) && !u.includes('/a-/') && !u.includes('/a/'))"
+        urls = await pg.eval_on_selector_all("img", grab)
+        hero = pg.locator('button[aria-label^="Ảnh của"], button[aria-label^="Photo of"]').first
+        if await hero.count():
+            try:
+                await hero.click(); await pg.wait_for_timeout(4000)
+                urls += await pg.eval_on_selector_all("img", grab)
+                bg = await pg.eval_on_selector_all("[style*='googleusercontent']", "els => els.map(e => (e.getAttribute('style').match(/url\\([\"']?([^\"')]+)/)||[])[1]).filter(Boolean)")
+                urls += [u for u in bg if "/a-/" not in u]
+            except Exception:
+                pass
+        seen = set()
+        for u in urls:
+            big = re.sub(r"=[swh]\d+[^/?#]*$", "=w1600-h1200-k-no", u.split("?")[0]) if "=" in u else u + "=w1600-h1200-k-no"
+            key = big.split("=")[0]
+            if key in seen:
+                continue
+            seen.add(key)
+            res.append({"img": big, "page": page, "title": q, "src": "gmaps"})
+    except Exception:
+        pass
+    finally:
+        await pg.close()
+    return res
+
+
 async def _search_ddg(ctx, q):
     r = await ctx.request.get("https://duckduckgo.com/?" + urllib.parse.urlencode({"q": q, "iax": "images", "ia": "images"}),
                               headers={"User-Agent": UA}, timeout=20000)
@@ -328,11 +372,31 @@ async def _search_ddg(ctx, q):
 async def cmd_images(a, ctx):
     from PIL import Image
     d = Path(a.out); d.mkdir(parents=True, exist_ok=True)
-    cands = await _search_bing(ctx, a.query)
-    src = "bing"
-    if len(cands) < 4:
-        cands += await _search_ddg(ctx, a.query); src = "bing+ddg"
-    seen, kept, tried = set(), [], 0
+    async def safe(f, q):
+        try:
+            return await f(ctx, q)
+        except Exception:
+            return []
+    srcs = [("bing", _search_bing, a.query), ("gmaps", _search_gmaps, a.place or a.query), ("ddg", _search_ddg, a.query)]
+    if a.place:  # có tên địa điểm Google Maps: ảnh đúng địa điểm trước
+        srcs = [srcs[1], srcs[0], srcs[2]]
+    used, seen, kept, tried = [], set(), [], 0
+    for name, f, q in srcs:
+        if len(kept) >= a.n:
+            break
+        cands = await safe(f, q)
+        if not cands:
+            continue
+        used.append(name); tried = 0
+        await _keep_images(ctx, a, d, cands, seen, kept, tried)
+    src = "+".join(used)
+    for k in kept:
+        k.pop("_h", None)
+    out({"ok": bool(kept), "query": a.query, "src": src, "images": kept, **({} if kept else {"err": "không tìm được ảnh phù hợp"})}, 0 if kept else 2)
+
+
+async def _keep_images(ctx, a, d, cands, seen, kept, tried):
+    from PIL import Image
     for c in cands:
         if len(kept) >= a.n or tried >= 14:
             break
@@ -346,7 +410,7 @@ async def cmd_images(a, ctx):
                 continue
             im = Image.open(io.BytesIO(await r.body())); im.load()
             w, h = im.size
-            if w < 600 or h < 380 or not (1.05 <= w / h <= 2.3):
+            if w < 600 or h < 380 or not ((1.0 if c.get("src") == "gmaps" else 1.05) <= w / h <= 2.3):
                 continue
             hsh = _ahash(im)
             if any(bin(hsh ^ k["_h"]).count("1") <= 10 for k in kept):
@@ -360,9 +424,6 @@ async def cmd_images(a, ctx):
             kept.append({"file": str(f), "w": w, "h": h, "img": u, "page": c.get("page"), "title": c.get("title", "")[:80], "_h": hsh})
         except Exception:
             continue
-    for k in kept:
-        k.pop("_h", None)
-    out({"ok": bool(kept), "query": a.query, "src": src, "images": kept, **({} if kept else {"err": "không tìm được ảnh phù hợp"})}, 0 if kept else 2)
 
 
 async def cmd_run(a, ctx):
@@ -479,6 +540,7 @@ def main():
     g = sp.add_parser("brand"); g.add_argument("url"); g.add_argument("--out", required=True)
     g = sp.add_parser("images"); g.add_argument("query"); g.add_argument("--out", required=True)
     g.add_argument("--prefix", required=True); g.add_argument("--n", type=int, default=2)
+    g.add_argument("--place", default="", help="tên địa điểm trên Google Maps: lấy ảnh của địa điểm trước")
     g = sp.add_parser("run"); g.add_argument("cfg"); g.add_argument("--out", required=True)
     g.add_argument("--frames", default=""); g.add_argument("--video", action="store_true")
     g.add_argument("--set", action="append", help="ghi đè CFG, vd --set bright=0.5 --set roads=false")
