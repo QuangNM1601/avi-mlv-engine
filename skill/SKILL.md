@@ -1,13 +1,13 @@
 ---
 name: "map-location-video"
-description: "Làm video vị trí và kết nối dự án bất động sản trên ảnh vệ tinh Esri nghiêng 3D, 2 giai đoạn: (1) gõ tên dự án → tự nghiên cứu (CĐT, quy mô, tiến độ, hạ tầng, giá và đối thủ), tọa độ Google Maps, thương hiệu, tiện ích + km/phút xe máy, 2 ảnh mỗi tiện ích, khung truyện + 3 câu móc có khung đầu, lời đọc kể chuyện → storyboard Claude Docs, hỏi từng vấn đề rồi sửa; (2) nhắn 'dựng' → MP4 9:16 / 1:1 / 16:9 mở bằng cảnh bản đồ chứng minh câu móc, giọng VieNeu miễn phí, phụ đề, nhạc, logo AVI ở góc và khung kết, gửi vào chat. Chạy hết trên workspace của Claude. Không dùng cho mô phỏng thi công metro."
+description: "Làm video vị trí và kết nối dự án bất động sản trên ảnh vệ tinh Esri nghiêng 3D, 2 giai đoạn: (1) gõ tên dự án → tự nghiên cứu (CĐT, quy mô, tiến độ, hạ tầng, giá và đối thủ), tọa độ Google Maps, thương hiệu, tiện ích + km/phút xe máy, 2 ảnh mỗi tiện ích, khung truyện + 3 câu móc có khung đầu, nhạc truyền cảm hứng miễn phí (Mixkit), lời đọc kể chuyện → storyboard Claude Docs, hỏi từng vấn đề rồi sửa; (2) nhắn 'dựng' → MP4 9:16 / 1:1 / 16:9 mở bằng cảnh bản đồ chứng minh câu móc, cảnh cắt đúng phách nhạc, giọng VieNeu đọc nhanh, kiểm kỹ phát âm tên tiếng Anh, phụ đề, logo AVI ở góc và khung kết, gửi vào chat. Chạy hết trên workspace của Claude. Không dùng cho mô phỏng thi công metro."
 ---
 
-# Video vị trí dự án trên ảnh vệ tinh — AVI Realty (v3.5)
+# Video vị trí dự án trên ảnh vệ tinh — AVI Realty (v3.6)
 
 Giai đoạn 1: nghiên cứu + storyboard trên Claude Docs để người dùng sửa. Giai đoạn 2: dựng MP4 theo storyboard đã sửa. Mọi lệnh chạy trên workspace của Claude; không cần máy người dùng, không dùng trình duyệt tích hợp.
 
-Không hỏi trước khi làm. Mặc định: 1:1 · nhạc Năng động · giọng VieNeu "Đức Trí" (nam, miền Nam) · thương hiệu Dự án + AVI · độ sáng 1 · tên đường bật · phụ đề bật · lời đọc kể chuyện theo 1 khung truyện · 3 giây đầu là cảnh bản đồ chứng minh câu móc (tuyến + ảnh tiện ích) + câu móc, cảnh kết có ảnh phối cảnh sau thẻ hotline · cự ly xe máy · 1080p. Thiếu dữ kiện → ghi "cần xác nhận" trên storyboard, hỏi ở bước 9 (sau khi có storyboard). Trả lời người dùng bằng tiếng Việt.
+Không hỏi trước khi làm. Mặc định: 1:1 · nhạc truyền cảm hứng từ Mixkit, cảnh cắt đúng phách · giọng VieNeu "Đức Trí" (nam, miền Nam), đọc nhanh 25 % · thương hiệu Dự án + AVI · độ sáng 1 · tên đường bật · phụ đề bật · lời đọc kể chuyện theo 1 khung truyện · 3 giây đầu là cảnh bản đồ chứng minh câu móc (tuyến + ảnh tiện ích) + câu móc, cảnh kết có ảnh phối cảnh sau thẻ hotline · cự ly xe máy · 1080p. Thiếu dữ kiện → ghi "cần xác nhận" trên storyboard, hỏi ở bước 9 (sau khi có storyboard). Trả lời người dùng bằng tiếng Việt.
 
 Không chép mã engine, script hay trang web thô vào hội thoại; chỉ đọc dòng JSON các lệnh in ra.
 
@@ -18,8 +18,8 @@ Không chép mã engine, script hay trang web thô vào hội thoại; chỉ đ�
 
 ## 0. Chuẩn bị (mỗi phiên)
 ```bash
-M=~/mlv; [ -d $M ] || git clone -q https://github.com/QuangNM1601/avi-mlv-engine $M; git -C $M fetch -q origin; git -C $M checkout -q 24f434549d3a77d78fc2c9b9e49bd00a3c707082
-python3 -c "import edge_tts, faster_whisper" 2>/dev/null || pip install -q --break-system-packages edge-tts faster-whisper
+M=~/mlv; [ -d $M ] || git clone -q https://github.com/QuangNM1601/avi-mlv-engine $M; git -C $M fetch -q origin; git -C $M checkout -q 579ecf972463c44b09d5e32e3816f671c76a1500
+python3 -c "import edge_tts, faster_whisper, librosa" 2>/dev/null || pip install -q --break-system-packages edge-tts faster-whisper librosa
 for h in server.arcgisonline.com router.project-osrm.org www.bing.com www.google.com; do printf "%s " $h; curl -s -o /dev/null -m 10 -w "%{http_code}\n" https://$h/; done
 ```
 - Host nào ra `000` → workspace chưa mở mạng: dừng, nhắn người dùng: "Vào claude.ai → Settings → Capabilities, cho phép workspace truy cập mọi tên miền (All domains), rồi mở cuộc trò chuyện mới và gọi lại skill."
@@ -90,6 +90,12 @@ Dòng 1 ≤ 16 ký tự, dòng 2 ≤ 28, dòng 3 = "TÊN DỰ ÁN · CĐT · NH�
 2. Thiếu ảnh → thử 1 từ khóa khác (tên tiếng Anh, tên viết tắt). Vẫn thiếu → tiện ích đó không ảnh.
 3. `mlv.py compose img/grid.jpg "img/p1_A.jpg|1A" "img/p1_B.jpg|1B" … --cols 4 --h 300`, xem 1 lần. Chọn mỗi tiện ích 1 ảnh: đúng địa điểm, sáng, không chữ, logo hay watermark lớn, không người cận mặt. Cả 2 không đạt → không ảnh.
 
+## 5b. Nhạc nền (trước lời đọc)
+1. `python3 $M/scripts/music.py find` (≈ 20 giây) → bài Mixkit theo tâm trạng motivational · uplifting · hopeful · corporate, đã đo BPM, độ đều phách, độ mạnh phách, xếp theo `score`. Chọn bài đầu (BPM 95–135, `lead` < 1 s); 2 bài kế ghi làm phương án trên storyboard.
+2. `python3 $M/scripts/music.py prep <id> --title "<tên bài>" --author "<tác giả>"` → `music.mp3` (phách mạnh đầu tiên rơi đúng 0 s) + `beats.json` (bpm, phách, ô nhịp, nguồn). CFG `music:{url:'music.mp3'}`.
+3. Giấy phép Mixkit Free License: dùng thương mại, quảng cáo online, không cần ghi nguồn; không bán lại file nhạc rời. Ghi tên bài, tác giả, link vào mục Nguồn của storyboard.
+4. Người dùng gửi nhạc và xác nhận có quyền → `music.py prep <file>`. Muốn nhạc tự tạo của engine → xóa `beats.json`, CFG `music:'nang-dong'` | `'sang-trong'`.
+
 ## 6. Lời đọc và giọng
 - `script.json`: `{"engine":"vieneu", "voice":"Đức Trí", "brand":true, "intro", "pois":[1 câu mỗi tiện ích, đúng thứ tự CFG], "outro"}`. Giọng: Đức Trí (nam, mặc định) · Adam (nam) · Thục Đoan (nữ), đều miền Nam. Giọng Edge: `"engine":"edge"`, `vi-VN-NamMinhNeural` / `vi-VN-HoaiMyNeural`. `brand:false` khi `brandMode:'none'`.
 - Lời đọc kể theo khung truyện (bước 4b), không liệt kê:
@@ -99,8 +105,12 @@ Dòng 1 ≤ 16 ký tự, dòng 2 ≤ 28, dòng 3 = "TÊN DỰ ÁN · CĐT · NH�
   - `pois[].tag` ≤ 20 ký tự theo mạch truyện (vd "7:00 · CON ĐI HỌC", "NỬA ĐÊM · KHI CẦN") — hiện trên thẻ thay tên loại.
   - Bỏ từ rỗng khi không kèm số: đẳng cấp, hàng đầu, thuận tiện, tiện lợi, dễ dàng, nhanh chóng, lý tưởng, tuyệt vời, sầm uất. Không nói điều chưa kiểm được ("không kẹt xe", giá, quy hoạch không nguồn).
   - Số đọc bằng chữ, khớp số liệu ("mười bảy phút", "ba phẩy bốn ki lô mét").
-- Tên tiếng Anh: VieNeu đọc thẳng; tts.py tự nghe lại từng câu có tên tiếng Anh bằng whisper, sai thì đọc lại (tối đa 3 lần). Giọng Edge: tts.py có sẵn cách đọc cho TBS, AVI, metro, Green, Skyline, Park, City, Mall…; tên khác → `"say": {"<chữ gốc>": "<cách đọc theo âm tiếng Việt>"}` (vd "Green Skyline": "Grin Xờ cai lai"). Phụ đề giữ chữ gốc.
-- `python3 $M/scripts/tts.py .` (≈ 1,5 phút) → `voice.mp3`, `words.json` (độ dài cảnh tự tính, mốc phụ đề theo từng từ), in `engine`. Ra `"engine":"edge"` khi muốn VieNeu → lệnh cài nền ở bước 0 chưa xong: chờ rồi chạy lại. `warn` có tên chưa nghe đúng → thêm `say` cho tên đó. `ok:false` + `long` → rút gọn đúng câu đó, chạy lại; không tăng tốc giọng. Cảnh mở, cảnh kết đọc tối đa 6,6 giây.
+- Nhịp đọc: `script.json` `"speed"` mặc định 1.25 (nhanh hơn 25 %, giữ cao độ; người dùng muốn 20–30 % → 1.2–1.3).
+- Phát âm tên tiếng Anh lẫn trong câu Việt (kiểm kỹ):
+  1. Bảng cách đọc VieNeu tự đổi: GO! → Gâu, AVI → A Vi; viết tắt tiếng Việt → chữ đầy đủ (KCN, KCNC, BV, ĐHQG, TP.HCM, CĐT). Viết tắt khác → ghi chữ đầy đủ trong lời đọc.
+  2. tts.py in `g2p` = phiên âm mọi tên tiếng Anh, viết tắt trước khi đọc. Mỗi tên tiếng Anh phải ra phiên âm tiếng Anh (vd Green Skyline → ɡɹˈiːn skˈaɪlaɪn). `warn` "đọc kiểu tiếng Việt" hoặc "đọc từng chữ cái tiếng Anh" → sửa `say`, chạy lại.
+  3. Câu có tên tiếng Anh: whisper tiếng Việt rồi tiếng Anh nghe lại, sai thì đọc lại (tối đa 6 lần), giữ bản nghe đúng. Giọng Edge: tts.py có sẵn cách đọc cho TBS, AVI, metro, Green, Skyline, Park, City, Mall…; tên khác → `"say": {"<chữ gốc>": "<cách đọc theo âm tiếng Việt>"}` (vd "Green Skyline": "Grin Xờ cai lai"). Phụ đề giữ chữ gốc.
+- `python3 $M/scripts/tts.py .` (≈ 1,5–2,5 phút) → `voice.mp3`, `words.json` (độ dài cảnh tự tính, mốc phụ đề theo từng từ), in `engine`, `g2p`. Có `beats.json` → độ dài cảnh mở, tiện ích, kết làm tròn theo ô nhịp, `hookDur` theo phách (`beatSync:true`); `mlv.py run` tự áp `hookDur`, `beat` (ảnh và nhãn tiện ích bật đúng phách). Ra `"engine":"edge"` khi muốn VieNeu → lệnh cài nền ở bước 0 chưa xong: chờ rồi chạy lại. `warn` có tên chưa nghe đúng → thêm `say` cho tên đó. `ok:false` + `long` → rút gọn đúng câu đó, chạy lại; không tăng tốc thêm. Cảnh mở, cảnh kết đọc tối đa 6,6 giây.
 - Kiểm tra cách đọc: `python3 $M/scripts/check_voice.py voice.mp3 "<tên tiếng Anh 1>" "<tên 2>"` → tên nào `false` thì đổi `say` cho tên đó, chạy lại tts.py (tối đa 2 lần). Chỉ kiểm tra tên tiếng Anh; tên tiếng Việt hay bị nhận dạng lệch dấu, bỏ qua.
 
 ## 7. CFG và khung hình mẫu
@@ -109,7 +119,7 @@ Dòng 1 ≤ 16 ký tự, dòng 2 ≤ 28, dòng 3 = "TÊN DỰ ÁN · CĐT · NH�
 {"name":"", "area":"PHƯỜNG · TỈNH", "intro":["DÒNG 1","DÒNG 2"], "subtitle":"quy mô · CĐT", "tagline":"≤ 4 loại tiện ích",
  "hotline":"0965.909.339", "project":{"lat":0,"lon":0},
  "pois":[{"cat":"","name":"","lat":0,"lon":0,"icon":"airport","photo":"img/p1_A.jpg","tag":"7:00 · CON ĐI HỌC"}],
- "formats":["1:1"], "music":"nang-dong", "marker":"logo", "res":1080,
+ "formats":["1:1"], "music":{"url":"music.mp3"}, "marker":"logo", "res":1080,
  "brandMode":"project", "brand":{}, "voice":{"url":"voice.mp3","wordsUrl":"words.json"}, "captions":true, "bright":1, "roads":true,
  "travel":"moto", "hero":{"intro":"hero/h1.jpg","outro":"hero/h3.jpg","dur":3},
  "hook":["1 PHÚT","TỚI SIÊU THỊ & BỆNH VIỆN","TÊN DỰ ÁN · CĐT · NHẬN NHÀ Q4/2026"], "hookBg":"map", "hookPoi":3}
@@ -125,7 +135,7 @@ Dòng 1 ≤ 16 ký tự, dòng 2 ≤ 28, dòng 3 = "TÊN DỰ ÁN · CĐT · NH�
 Làm theo hướng dẫn của docs connector (`guide` topic.index, topic.uploads). Tên doc: "Storyboard video vị trí — <Dự án>". Mục:
 1. Câu đầu: "<n> cảnh · <T> giây · <khung>. Sửa lời đọc, chọn ảnh, đổi thiết lập ngay trên doc rồi nhắn **dựng**."
 2. **Thiết lập** — bảng `Mục | Chọn`; mỗi dòng 1 enum + 1 ô chọn (dropdown), chọn sẵn mặc định:
-   Khung hình (1:1 · 9:16 · 16:9 · 1:1 + 9:16 · Cả 3) · Nhạc (Năng động · Sang trọng · Không nhạc) · Giọng (Đức Trí – nam · Adam – nam · Thục Đoan – nữ · Edge nam · Edge nữ · Không giọng) · Thương hiệu (Dự án + AVI · Chỉ AVI · Chỉ dự án · Không) · Độ sáng ảnh vệ tinh (0,5 · 1) · Tên đường (Bật · Tắt) · Phụ đề (Bật · Tắt). Dưới bảng: ảnh so sánh độ sáng.
+   Khung hình (1:1 · 9:16 · 16:9 · 1:1 + 9:16 · Cả 3) · Nhạc (<bài 1> · <bài 2> · <bài 3> từ bước 5b · Nhạc tự tạo · Không nhạc) · Tốc độ đọc (1,0 · 1,15 · 1,25 · 1,3) · Giọng (Đức Trí – nam · Adam – nam · Thục Đoan – nữ · Edge nam · Edge nữ · Không giọng) · Thương hiệu (Dự án + AVI · Chỉ AVI · Chỉ dự án · Không) · Độ sáng ảnh vệ tinh (0,5 · 1) · Tên đường (Bật · Tắt) · Phụ đề (Bật · Tắt). Dưới bảng: ảnh so sánh độ sáng.
 2b. **Câu chuyện và câu móc** — dòng "Khung truyện: <tên> · Thông điệp: <1 câu>" + ô chọn khung (4 khung ở bước 4b); dòng "Khách chính · Điểm khác biệt · Đối thủ" kèm nguồn; bảng `Phương án | Kiểu | Chữ trên hình | Câu nói 3 giây | Cảnh chứng minh | Đạt (x/6)` + ô chọn phương án (chọn sẵn phương án đạt nhiều nhất); ảnh `hooks.jpg`.
 3. **Kịch bản** — bảng 1 dòng mỗi cảnh: `# | Cảnh | Loại | Nhãn thẻ | Cự ly (xe máy) | Lời đọc | Ảnh | Giữ | Nguồn ảnh`. `Ảnh` = ô chọn (A · B · Không ảnh), chọn sẵn ảnh đã chọn ở bước 5; `Giữ` = ô chọn (Giữ · Bỏ); `Nguồn ảnh` = `[A](page) · [B](page)`. Cảnh mở, cảnh kết: `Ảnh` "—", `Giữ` "Giữ" (chữ thường).
 4. **Hình từng cảnh** — mỗi cảnh 1 dòng "Cảnh i — <tên> · <km> km · <phút> phút" + ảnh ghép [khung | A | B]; cảnh mở, cảnh kết: khung hình.
@@ -146,8 +156,8 @@ Kết thúc: 1 dòng "Storyboard đã cập nhật theo câu trả lời; kiểm
 # GIAI ĐOẠN 2 — Dựng chính thức
 Bắt đầu khi người dùng nhắn "dựng" / "duyệt" (hoặc gửi link storyboard + "dựng").
 1. Đọc doc (`mcp__Claude_Docs__read`, nạp schema qua ToolSearch): bảng Thiết lập, bảng Kịch bản, khối Dữ liệu dựng. Thư mục làm việc còn → dùng. Mất → bước 0, tạo lại `cfg.json`, `script.json` từ `assets/<slug>/storyboard.json` (`photo` = URL `img` của ảnh đã chọn, tự tải khi `run`), chạy lại `mlv.py brand`.
-2. Áp vào CFG: Câu móc → `hook`, `hookPoi`, `hookBg` (+ câu đầu của `script.intro`) · Khung truyện đổi → viết lại lời đọc, xếp lại `pois`, `tag` theo bước 4b · Khung hình → `formats` · Nhạc → `music` (`nang-dong` | `sang-trong` | `none`; nhạc riêng người dùng gửi và xác nhận có quyền → `ffmpeg -i in -t 60 -ac 2 -b:a 128k music.mp3`, `music:{url:'music.mp3'}`) · Giọng → `script.engine` + `script.voice`, hoặc bỏ `voice` + `captions:false` · Thương hiệu → `brandMode` (`project` | `avi` | `project-only` | `none`) · Độ sáng → `bright` · Tên đường → `roads` · Phụ đề → `captions` · cảnh "Bỏ" → xóa khỏi `pois` và `script.pois` · Ảnh A / B / Không ảnh → `pois[].photo` · lời đọc đã sửa → `script.json`.
-3. Lời đọc, giọng hoặc số cảnh đổi → chạy lại `tts.py` + `check_voice.py`.
+2. Áp vào CFG: Câu móc → `hook`, `hookPoi`, `hookBg` (+ câu đầu của `script.intro`) · Khung truyện đổi → viết lại lời đọc, xếp lại `pois`, `tag` theo bước 4b · Khung hình → `formats` · Nhạc → bài Mixkit: `music.py prep <id>` (rồi chạy lại tts.py để cảnh khớp phách mới); nhạc tự tạo → xóa `beats.json`, `music:'nang-dong'` | `'sang-trong'`; không nhạc → `music:'none'`; nhạc riêng người dùng có quyền → `music.py prep <file>` · Tốc độ đọc → `script.speed` · Giọng → `script.engine` + `script.voice`, hoặc bỏ `voice` + `captions:false` · Thương hiệu → `brandMode` (`project` | `avi` | `project-only` | `none`) · Độ sáng → `bright` · Tên đường → `roads` · Phụ đề → `captions` · cảnh "Bỏ" → xóa khỏi `pois` và `script.pois` · Ảnh A / B / Không ảnh → `pois[].photo` · lời đọc đã sửa → `script.json`.
+3. Lời đọc, giọng, tốc độ, nhạc hoặc số cảnh đổi → chạy lại `tts.py` + `check_voice.py`.
 4. `mlv.py run cfg.json --out out --video` (timeout 10 phút; 1080p ≈ 1,5 phút cho 1:1, ≈ 2 phút cho 9:16 mỗi 50 giây video). Nhiều khung hoặc video dài → chạy nền (`run_in_background`), chờ thông báo, không thăm dò.
 5. Kiểm tra như bước 7.2, thêm: `out[].audio` có tiếng; `routes[].est` = "chim bay" → báo người dùng; `fetchWarn` → ảnh nào không tải được.
 6. SendUserFile từng MP4 (`<slug>_1x1.mp4`, …). Máy người dùng đã liên kết → ghi thêm vào `~/Videos/map-video/<slug>/`.
@@ -158,7 +168,7 @@ Bắt đầu khi người dùng nhắn "dựng" / "duyệt" (hoặc gửi link s
 
 ## Quy tắc giữ nguyên
 - Kịch bản: 3 giây đầu cảnh bản đồ của tiện ích chứng minh câu móc (tuyến, ảnh, nhãn) + câu móc, đẩy zoom 0,5 giây, tiếng "pop" (không màn logo, không phụ đề; `hookBg:'hero'` → ảnh phối cảnh) → chớp trắng sang bản đồ: tên dự án + dòng phụ → logo dự án tại ghim → mỗi tiện ích `poiDur` giây (5,5–9), ảnh tiện ích bật cạnh ghim từ giây 3,5 của cảnh, không đặt giữa khung, không che ghim và logo dự án → khung kết: tóm tắt tuyến trên bản đồ, rồi ảnh phối cảnh phía sau thẻ (tên dự án, số tiện ích + bán kính, logo AVI, hotline, website). Cảnh mở, kết dài theo giọng (3–8 giây).
-- Nhạc: chỉ nhạc tự tạo của engine hoặc file người dùng có quyền sử dụng; có giọng thì nhạc tự hạ. Chuẩn −14 LUFS.
+- Nhạc: bài Mixkit (Mixkit Free License) qua `music.py`, nhạc tự tạo của engine, hoặc file người dùng có quyền sử dụng; không lấy nhạc từ nguồn khác khi chưa kiểm giấy phép dùng thương mại. Có giọng thì nhạc tự hạ. Chuẩn −14 LUFS. Có `beats.json` → mọi điểm cắt cảnh rơi đúng ô nhịp.
 - Logo AVI Realty luôn trên nền kem, không đổi màu, không kéo méo. Thương hiệu dự án chỉ dùng khi AVI là đại lý được ủy quyền.
 - Ảnh tiện ích lấy từ web để minh họa vị trí; trước khi chạy quảng cáo trả phí, kiểm tra quyền dùng ảnh theo cột Nguồn ảnh.
 - Dòng "Ảnh vệ tinh: Esri, Maxar · Đường: © OpenStreetMap · Số liệu ước tính" luôn hiện; chỉ xóa khi người dùng yêu cầu rõ. Quảng cáo thương mại: nhắc kiểm tra điều khoản ảnh Esri.
