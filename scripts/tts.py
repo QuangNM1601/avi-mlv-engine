@@ -14,7 +14,9 @@ script.json:
   "brand": true,                    # false khi brandMode 'none'
   "intro": "câu mở",
   "pois": ["1 câu / tiện ích", "..."],   # đúng thứ tự pois trong CFG
-  "outro": "câu chốt"
+  "outro": "câu chốt",
+  "say": {"Green Skyline": "Grin Xờ cai lai"},   # tùy chọn: cách đọc từ nước ngoài (phụ đề giữ chữ gốc)
+  "style": "song-dong"              # song-dong (mặc định: đổi cao độ, tốc độ theo câu) | deu (giọng gốc)
 }
 
 Cần: Python 3.9+, gói edge-tts (pip install edge-tts), ffmpeg + ffprobe trong PATH, mạng internet.
@@ -28,6 +30,27 @@ LEAD_POI = 0.6      # giây sau đầu cảnh tiện ích thì bắt đầu đ�
 TAIL_POI = 0.3      # khoảng trống trước cảnh kế tiếp
 LEAD_INTRO, LEAD_OUT, TAIL_END = 0.3, 0.5, 0.3
 CAP_WORDS = 7
+# Cách đọc mặc định cho từ tiếng Anh / viết tắt hay gặp (khớp nguyên từ, phân biệt hoa thường); script.json "say" ghi đè
+LEXICON = {
+    "TBS Land": "Ti bi ét Len", "TBS": "Ti bi ét", "AVI Realty": "A vi Ri ồ ti", "AVI": "A vi",
+    "metro": "mê trô", "Metro": "Mê trô", "GO!": "Gâu", "Skyline": "Xờ cai lai", "Green": "Grin",
+    "Mall": "Mo", "mall": "mo", "Land": "Len", "Park": "Pác", "City": "Xi ti", "Center": "Xen tơ",
+    "Central": "Xen trồ", "Garden": "Ga đần", "View": "Viu", "Tower": "Tao ơ", "Sky": "Xờ cai",
+}
+# Ngữ điệu "song-dong": mỗi câu một mức cao độ / tốc độ khác nhau để giọng bớt đều đều
+STYLE = {
+    "intro": ("+8%", "+8Hz"),
+    "poi": [("+5%", "+6Hz"), ("+3%", "+1Hz"), ("+6%", "+4Hz"), ("+4%", "-1Hz"), ("+5%", "+5Hz"), ("+3%", "+2Hz")],
+    "outro": ("+0%", "+5Hz"),
+}
+
+
+def spoken(text, lex):
+    """Thay từ theo bảng cách đọc (cụm dài trước); trả chuỗi để đọc."""
+    import re as _re
+    for k in sorted(lex, key=len, reverse=True):
+        text = _re.sub(r"(?<![\wÀ-ỹ])" + _re.escape(k) + r"(?![\wÀ-ỹ])", lex[k], text)
+    return text
 
 
 def die(msg, **extra):
@@ -46,14 +69,14 @@ def duration(path):
     return float(run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)]).strip())
 
 
-async def synth(text, voice, rate, out):
+async def synth(text, voice, rate, out, pitch="+0Hz"):
     import os
     ca = os.environ.get("SSL_CERT_FILE") or ("/root/.ccr/ca-bundle.crt" if os.path.exists("/root/.ccr/ca-bundle.crt") else "")
     if ca:  # proxy giải mã TLS (máy chủ Claude): edge-tts dùng certifi, trỏ certifi sang bundle của proxy
         import certifi
         certifi.where = lambda: ca
     import edge_tts
-    kw = {"rate": rate}
+    kw = {"rate": rate, "pitch": pitch}
     proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
     if proxy:  # aiohttp không tự dùng biến proxy của hệ thống
         kw["proxy"] = proxy
@@ -76,8 +99,13 @@ def chunks(text, words, start, dur):
     toks = text.split()
     if words and len(words) == len(toks):  # khớp từng từ: giữ chữ gốc có dấu câu
         units = [(a, b, t) for (a, b, _), t in zip(words, toks)]
-    elif words and len(words) >= max(1, len(toks) // 2):
-        units = list(words)
+    elif words:  # số từ đọc khác số từ gốc (đã đổi cách đọc): chia mốc theo tỉ lệ, phụ đề vẫn là chữ gốc
+        n, m = len(toks), len(words)
+        units = []
+        for j, t in enumerate(toks):
+            a = words[min(m - 1, j * m // n)][0]
+            b = words[min(m - 1, max(j * m // n, (j + 1) * m // n - 1))][1]
+            units.append((a, b, t))
     else:  # không có mốc từ: chia đều theo số từ
         n = max(1, len(toks)); step = dur / n
         units = [(i * step, (i + 1) * step, w) for i, w in enumerate(toks)]
@@ -119,6 +147,8 @@ async def main():
     s = json.loads(sp.read_text(encoding="utf-8"))
     voice, rate = s.get("voice", "vi-VN-NamMinhNeural"), s.get("rate", "+0%")
     brand = s.get("brand", True)
+    lex = {**LEXICON, **(s.get("say") or {})}
+    lively = s.get("style", "song-dong") != "deu"
     pois = [p.strip() for p in s.get("pois", []) if p and p.strip()]
     if not (1 <= len(pois) <= 6):
         die("script.json cần 1–6 câu tiện ích")
@@ -136,9 +166,14 @@ async def main():
             continue
         f = tmp / f"{key}.mp3"
         words, err = [], ""
+        r, ptch = rate, "+0Hz"
+        if lively:
+            r, ptch = STYLE["intro"] if key == "intro" else STYLE["outro"] if key == "outro" else STYLE["poi"][(int(key[3:]) - 1) % len(STYLE["poi"])]
+            if rate not in ("+0%", "0%"):
+                r = rate
         for attempt in range(4):
             try:
-                words = await synth(text.strip(), voice, rate, f)
+                words = await synth(spoken(text.strip(), lex), voice, r, f, ptch)
                 if f.stat().st_size > 1000:
                     break
             except Exception as e:  # mạng chập chờn: thử lại

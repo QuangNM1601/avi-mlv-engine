@@ -5,7 +5,7 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   geo    "tên 1" ["tên 2"...] --near LAT,LON        tọa độ qua Photon → Nominatim (MLV.geo)
   gmaps  "<link Google Maps | tên địa điểm>"...     tọa độ đọc từ Google Maps
   poi    LAT LON [--km 3] [--dist]                   ứng viên tiện ích (MLV.poi) [+ km/phút]
-  dist   LAT LON --pois pois.json                    km/phút đường lái xe (OSRM Table)
+  dist   LAT LON --pois pois.json [--travel moto|car] km/phút xe máy (mặc định, 25–30 km/h) hoặc ô tô (OSRM)
   brand  <url web dự án> --out DIR                   màu, font (tải file), logo (logo.png)
   images "<từ khóa>" --out DIR --prefix p1 [--n 2] [--place "<tên, tỉnh>"]
                                                      tìm + tải ảnh web (Bing, ảnh địa điểm Google Maps, DDG), giữ n ảnh
@@ -24,7 +24,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.1.2.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.2.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -209,15 +209,42 @@ async def cmd_poi(a, ctx):
     if isinstance(c, dict) and c.get("err"):
         out({"ok": False, **c}, 2)
     if a.dist:
-        c = await pg.evaluate("([p, l]) => MLV.dist(p, l)", [P, c])
+        c = await moto_dist(ctx, a.lat, a.lon, c) if a.travel == "moto" else await pg.evaluate("([p, l]) => MLV.dist(p, l)", [P, c])
     out({"ok": True, "src": await pg.evaluate("MLV.st.poiSrc"), "pois": c})
 
 
+def moto_min(km):
+    """Phút đi xe máy, giao thông bình thường: 25 km/h trong 8 km đầu, 30 km/h phần sau (giống engine)."""
+    return max(1, km / 25 * 60 if km <= 8 else 19.2 + (km - 8) / 30 * 60)
+
+
+async def moto_dist(ctx, lat, lon, pois):
+    """Tuyến xe máy theo hồ sơ xe đạp OSRM (không cao tốc, được băng qua đường), tuần tự."""
+    res = []
+    for p in pois:
+        q = dict(p)
+        u = (f"https://routing.openstreetmap.de/routed-bike/route/v1/driving/{lon},{lat};{p['lon']},{p['lat']}"
+             "?overview=false")
+        try:
+            r = await ctx.request.get(u, timeout=20000)
+            km = (await r.json())["routes"][0]["distance"] / 1000
+        except Exception:
+            import math
+            km = math.hypot((p["lat"] - lat) * 111.2, (p["lon"] - lon) * 111.2 * math.cos(math.radians(lat))) * 1.3
+            q["est"] = "chim bay x1,3"
+        q["km"], q["min"] = round(km, 1), round(moto_min(km))
+        res.append(q)
+        await asyncio.sleep(0.4)
+    return sorted(res, key=lambda x: x["min"])
+
+
 async def cmd_dist(a, ctx):
-    pg = await engine_page(ctx)
     pois = json.loads(Path(a.pois).read_text(encoding="utf-8"))
+    if a.travel == "moto":
+        return out({"ok": True, "travel": "xe máy", "pois": await moto_dist(ctx, a.lat, a.lon, pois)})
+    pg = await engine_page(ctx)
     r = await pg.evaluate("([p, l]) => MLV.dist(p, l)", [{"lat": a.lat, "lon": a.lon}, pois])
-    out({"ok": True, "pois": r})
+    out({"ok": True, "travel": "ô tô", "pois": r})
 
 
 FONT_FACE = re.compile(r"@font-face\s*{([^}]*)}", re.I | re.S)
@@ -536,7 +563,9 @@ def main():
     g = sp.add_parser("gmaps"); g.add_argument("items", nargs="+")
     g = sp.add_parser("poi"); g.add_argument("lat", type=float); g.add_argument("lon", type=float)
     g.add_argument("--km", type=float, default=3); g.add_argument("--dist", action="store_true")
+    g.add_argument("--travel", default="moto", choices=["moto", "car"])
     g = sp.add_parser("dist"); g.add_argument("lat", type=float); g.add_argument("lon", type=float); g.add_argument("--pois", required=True)
+    g.add_argument("--travel", default="moto", choices=["moto", "car"])
     g = sp.add_parser("brand"); g.add_argument("url"); g.add_argument("--out", required=True)
     g = sp.add_parser("images"); g.add_argument("query"); g.add_argument("--out", required=True)
     g.add_argument("--prefix", required=True); g.add_argument("--n", type=int, default=2)
