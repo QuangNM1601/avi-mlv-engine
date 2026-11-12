@@ -9,6 +9,7 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   brand  <url web dự án> --out DIR                   màu, font (tải file), logo (logo.png)
   images "<từ khóa>" --out DIR --prefix p1 [--n 2] [--place "<tên, tỉnh>"]
                                                      tìm + tải ảnh web (Bing, ảnh địa điểm Google Maps, DDG), giữ n ảnh
+  renders <url web dự án> --out DIR [--n 6]         ảnh phối cảnh lớn (≥1100 px, ngang) cho cảnh mở/kết
   run    cfg.json --out DIR [--frames auto|"4.5,10.6"] [--video] [--set k=v ...]
                                                      dựng: khung hình mẫu (JPEG) và/hoặc MP4 (tiếng AAC)
                                                      --frames auto: khung mở + 1 khung/tiện ích + khung kết
@@ -16,7 +17,7 @@ Lệnh (mọi lệnh in 1 dòng JSON ra stdout):
   compose out.jpg "a.jpg|Nhãn A" "b.jpg|Nhãn B"... [--h 480] [--cols 4]   ghép ảnh có nhãn (lưới)
 
 File cục bộ trong cfg.json (pois[].photo, markerUrl, brand.logo, brand.fontUrl, voice.url,
-voice.wordsUrl, music.url) được phục vụ cùng nguồn với trang engine, không cần đưa lên CDN;
+voice.wordsUrl, music.url, hero.intro, hero.outro) được phục vụ cùng nguồn với trang engine, không cần đưa lên CDN;
 ảnh/logo/font là URL web được tải trước về <out>/_cache.
 Có voice.wordsUrl cục bộ (words.json của tts.py) → tự điền poiDur, introDur, outroDur còn thiếu trong cfg.
 """
@@ -24,7 +25,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.2.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.3.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -118,6 +119,12 @@ def localize(cfg, base):
     for poi in cfg.get("pois", []):
         if poi.get("photo"):
             poi["photo"] = m(poi["photo"])
+    if isinstance(cfg.get("hero"), str):
+        cfg["hero"] = m(cfg["hero"])
+    elif isinstance(cfg.get("hero"), dict):
+        for k in ("intro", "outro", "url"):
+            if cfg["hero"].get(k):
+                cfg["hero"][k] = m(cfg["hero"][k])
     return cfg, files
 
 
@@ -127,6 +134,8 @@ async def fetch_remote(cfg, ctx, cache):
     if isinstance(cfg.get("brand"), dict):
         slots += [(cfg["brand"], "logo"), (cfg["brand"], "fontUrl")]
     slots.append((cfg, "markerUrl"))
+    if isinstance(cfg.get("hero"), dict):
+        slots += [(cfg["hero"], "intro"), (cfg["hero"], "outro")]
     warn = []
     for obj, k in slots:
         u = obj.get(k)
@@ -453,6 +462,65 @@ async def _keep_images(ctx, a, d, cands, seen, kept, tried):
             continue
 
 
+RENDER_BAD = re.compile(r"logo|icon|favicon|doitac|partner|avatar|whatsapp|zalo|messenger|qr|sprite|bg-?(green|yellow)|background-yellow", re.I)
+
+
+async def cmd_renders(a, ctx):
+    """Ảnh phối cảnh lớn trên web dự án (img, srcset, nền CSS) cho cảnh mở đầu / kết thúc."""
+    from PIL import Image
+    d = Path(a.out); d.mkdir(parents=True, exist_ok=True)
+    r = await ctx.request.get(a.url, headers={"User-Agent": UA}, timeout=30000)
+    html = await r.text()
+    texts = [html]
+    for h in re.findall(r"""href=["']([^"']+\.css[^"']*)["']""", html)[:15]:
+        try:
+            rr = await ctx.request.get(urllib.parse.urljoin(a.url, h), timeout=15000)
+            rr.ok and texts.append(await rr.text())
+        except Exception:
+            pass
+    cands = []
+    for t in texts:
+        for u in re.findall(r"""(?:src|data-src|data-lazy-src|href|srcset|data-bg)=["']([^"']+)["']|url\(\s*["']?([^"')]+)""", t):
+            whole = re.sub(r"https?://sp-ao\.shortpixel\.ai/client/[^/]*/", "", u[0] or u[1])  # bỏ lớp CDN ShortPixel
+            for part in re.split(r",\s+", whole):
+                v = part.strip().split(" ")[0]
+                if not re.search(r"\.(jpe?g|png|webp)(\?|$)", v, re.I) or RENDER_BAD.search(v):
+                    continue
+                v = re.sub(r"-\d{2,4}x\d{2,4}(\.\w+)$", r"\1", v)  # bỏ hậu tố ảnh thu nhỏ WordPress
+                v = urllib.parse.urljoin(a.url, v)
+                v not in cands and cands.append(v)
+    kept = []
+    for u in cands:
+        if len(kept) >= a.n:
+            break
+        try:
+            rr = await ctx.request.get(u, headers={"User-Agent": UA, "Referer": a.url}, timeout=30000)
+            if not rr.ok:
+                continue
+            im = Image.open(io.BytesIO(await rr.body())); im.load()
+            w, h = im.size
+            if w < 1100 or not (1.15 <= w / h <= 2.4):
+                continue
+            px = im.convert("L").resize((32, 32))
+            lo, hi = px.getextrema()
+            if hi - lo < 90:  # nền trơn, họa tiết
+                continue
+            hsh = _ahash(im)
+            if any(bin(hsh ^ k["_h"]).count("1") <= 10 for k in kept):
+                continue
+            im = im.convert("RGB")
+            if w > 2400:
+                im = im.resize((2400, round(h * 2400 / w)), Image.LANCZOS)
+            f = d / f"h{len(kept) + 1}.jpg"
+            im.save(f, "JPEG", quality=90)
+            kept.append({"file": str(f), "w": w, "h": h, "img": u, "_h": hsh})
+        except Exception:
+            continue
+    for k in kept:
+        k.pop("_h", None)
+    out({"ok": bool(kept), "renders": kept, **({} if kept else {"err": "không thấy ảnh phối cảnh lớn"})}, 0 if kept else 2)
+
+
 async def cmd_run(a, ctx):
     d = Path(a.out); d.mkdir(parents=True, exist_ok=True)
     cfg_path = Path(a.cfg)
@@ -570,6 +638,7 @@ def main():
     g = sp.add_parser("images"); g.add_argument("query"); g.add_argument("--out", required=True)
     g.add_argument("--prefix", required=True); g.add_argument("--n", type=int, default=2)
     g.add_argument("--place", default="", help="tên địa điểm trên Google Maps: lấy ảnh của địa điểm trước")
+    g = sp.add_parser("renders"); g.add_argument("url"); g.add_argument("--out", required=True); g.add_argument("--n", type=int, default=6)
     g = sp.add_parser("run"); g.add_argument("cfg"); g.add_argument("--out", required=True)
     g.add_argument("--frames", default=""); g.add_argument("--video", action="store_true")
     g.add_argument("--set", action="append", help="ghi đè CFG, vd --set bright=0.5 --set roads=false")
@@ -585,7 +654,7 @@ def main():
             b, ctx = await open_browser(p)
             try:
                 await {"geo": cmd_geo, "gmaps": cmd_gmaps, "poi": cmd_poi, "dist": cmd_dist, "brand": cmd_brand,
-                       "images": cmd_images, "run": cmd_run}[a.cmd](a, ctx)
+                       "images": cmd_images, "renders": cmd_renders, "run": cmd_run}[a.cmd](a, ctx)
             finally:
                 await b.close()
     try:

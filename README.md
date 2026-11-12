@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.3.0 | `mlv-engine-3.3.0.js` | `465aae93193cad7455f377d88610dee3b88321754698f67bb5910798a06ea7c9` |
 | 3.2.0 | `mlv-engine-3.2.0.js` | `00d0f01b528189f36283477ecfb1ea80c1840bf9ae43789a884b4e93d5743f83` |
 | 3.1.2 | `mlv-engine-3.1.2.js` | `029fa54598a9af952b2d55c2a3187df2931efb9f0b08a3d260f828a1338d37f7` |
 | 3.1.1 | `mlv-engine-3.1.1.js` | `68f4f8794f781cecb11e85bb86b8b112c25910b0acbfe92ad800586913a8c544` |
@@ -17,6 +18,15 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.3.0
+| CFG | Làm gì |
+|---|---|
+| `hero:{intro, outro, dur:3}` | Ảnh phối cảnh dự án sáng, rõ: toàn khung từ khung hình đầu tiên (`dur` giây, zoom chậm), rồi chuyển sang bản đồ; `outro` hiện sau phần tóm tắt tuyến ở cảnh kết, dưới thẻ hotline |
+| `hook:[dòng lớn, dòng nền màu, dòng nhỏ]` | Câu móc 3 giây đầu trên ảnh `hero.intro` (vd "1 PHÚT" / "TỚI BỆNH VIỆN & SIÊU THỊ" / "TÊN DỰ ÁN · CĐT · NHẬN NHÀ"); có hook thì bỏ màn logo mở đầu, ẩn phụ đề trong 3 giây đầu, tên dự án hiện sau |
+| `bgBlur` | Mặc định 0 (không làm mờ) |
+
+`scripts/mlv.py renders <url>`: lấy ảnh phối cảnh lớn trên web dự án (img, srcset, nền CSS).
 
 ## 3.2.0
 | CFG | Làm gì |
