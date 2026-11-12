@@ -1,6 +1,6 @@
 {
  "slug": "green-skyline",
- "engine": "mlv-engine 3.2.0",
+ "engine": "mlv-engine 3.3.0",
  "project": {
   "name": "Green Skyline",
   "developer": "TBS Group / TBS Land",
@@ -159,7 +159,17 @@
   "bright": 1,
   "roads": true,
   "travel": "moto",
-  "bgBlur": 1
+  "bgBlur": 0,
+  "hook": [
+   "1 PHÚT",
+   "TỚI BỆNH VIỆN & SIÊU THỊ",
+   "GREEN SKYLINE · TBS LAND · NHẬN NHÀ Q4/2026"
+  ],
+  "hero": {
+   "intro": "https://green-skyline.net/wp-content/themes/ndmfullpage/assets/assets/index/index6.png",
+   "outro": "https://green-skyline.net/wp-content/themes/ndmfullpage/assets/assets/other/bgindex-2.png",
+   "dur": 3
+  }
  },
  "brand": {
   "site": "https://green-skyline.net/"
@@ -167,7 +177,7 @@
  "script": {
   "voice": "vi-VN-NamMinhNeural",
   "brand": true,
-  "intro": "Green Skyline của TBS Land, mặt tiền Quốc lộ một K, nhận nhà từ quý bốn năm hai không hai sáu.",
+  "intro": "Một phút tới bệnh viện, siêu thị! Green Skyline, mặt tiền Quốc lộ một K.",
   "pois": [
    "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chỉ một phút xe máy.",
    "Đại siêu thị ngay đối diện, băng qua đường chỉ một phút.",
