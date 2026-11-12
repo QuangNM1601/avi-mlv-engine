@@ -75,6 +75,7 @@ Cấu hình kiểu 2.2 chạy y như cũ.
 | File | Chạy ở đâu | Việc |
 |---|---|---|
 | `scripts/mlv.py <lệnh>` | Workspace của Claude (Python + Playwright + Chrome) | Cả quy trình không cần máy người dùng: `gmaps`, `geo`, `poi`, `dist`, `brand`, `images`, `run` (khung storyboard / MP4), `compose`. Xem đầu file |
+| `scripts/check_voice.py voice.mp3 "tên"...` | Workspace của Claude (faster-whisper) | Nghe lại giọng đọc, báo tên tiếng Anh nào chưa đọc đúng |
 | `tools/brand-snippet.js` | Tab web chủ đầu tư (javascript_tool) | Trả JSON màu, font, logo; bản một dòng nằm trong SKILL.md |
 | `scripts/tts.py <thư mục>` | Workspace của Claude hoặc máy người dùng (Python + edge-tts + ffmpeg) | `script.json` → `voice.mp3` + `words.json`, in `poiDur`, `introDur`, `outroDur` |
 | `scripts/push_assets.sh <slug> <file...>` | Workspace của Claude | Đẩy logo/nhạc/giọng vào `assets/<slug>/`, in URL jsDelivr |
