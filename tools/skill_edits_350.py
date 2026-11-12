@@ -122,5 +122,5 @@ for x in E:
         sys.exit(f"{n}x: {x['old_string'][:80]!r}")
     out = out.replace(x["old_string"], x["new_string"])
 Path(sys.argv[2]).write_text(out, encoding="utf-8")
-Path(sys.argv[2] + ".edits.json").write_text(json.dumps(E, ensure_ascii=False), encoding="utf-8")
+Path(sys.argv[4] if len(sys.argv) > 4 else "/tmp/skill_edits.json").write_text(json.dumps(E, ensure_ascii=False), encoding="utf-8")
 print("ok", len(E), "edits", len(src.splitlines()), "->", len(out.splitlines()), "lines")
