@@ -1,0 +1,160 @@
+{
+ "slug": "green-skyline",
+ "engine": "mlv-engine 3.1.1 @ 8eb93cd",
+ "project": {
+  "name": "Green Skyline",
+  "developer": "TBS Group / TBS Land",
+  "lat": 10.8883098,
+  "lon": 106.7753449
+ },
+ "cfg": {
+  "name": "Green Skyline",
+  "area": "DĨ AN · TP.HCM",
+  "intro": [
+   "GREEN",
+   "SKYLINE"
+  ],
+  "subtitle": "1.296 căn · 4 tháp · TBS Land",
+  "tagline": "Y tế · mua sắm · metro · sân bay",
+  "hotline": "0965.909.339",
+  "project": {
+   "lat": 10.8883098,
+   "lon": 106.7753449
+  },
+  "pois": [
+   {
+    "cat": "Y TẾ",
+    "name": "BV Hoàn Mỹ Thủ Đức",
+    "lat": 10.8878554,
+    "lon": 106.7737473,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcJQiiXxjVmBiNmiTZCFxXT9RS0nF7ZLSRitJ9cIdeTvOLt0-89MSIgsBtIcwn0lhP2-OTQS0yjFWxsQp_ZwFm5CXKC3yo7SUFMAD3LnmsufAuZYx3edEpXbbmD-YSawsKN5cM=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLezlNIV1bXVYBEvK_2MZxo6_eaFjmGz6VrK23UDFRkqLA3boftEp1hMEdf1RhvVmuVyZ6l-JDvNRLqltXw339pJQ7bM9ruiJx50xjL53hSRDzNp1V1nJKhV_pznlYXjY44G8FBiGA=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
+     }
+    }
+   },
+   {
+    "cat": "MUA SẮM",
+    "name": "GO! Dĩ An",
+    "lat": 10.8894375,
+    "lon": 106.7758125,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeveN5lOLmZQsOR98eVhlKMTtUNu8RtTNOxO4dULK4sCdEfMGx-tGZzB4_FgtsUhh-A5fGIM80Wu9YPkuWQZvJxf31hltH_kgJB2M92LQ94WdQTwjixX1TcUMCSCJLK9jqBge4=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R4wLGRDf0jmFxDwxjx8MkRurTDHY67MPIN8-PBdfQvX0LZKdzS3hQcklK8BzLCew27G9rP0KJ7c_AtGH0y_yrUMKjcLO6kAcPT7Tn8wrnVMM_PyzIlnLjg-UcNkavVcTqbqNN9n1EYsOo=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
+     }
+    }
+   },
+   {
+    "cat": "GIÁO DỤC",
+    "name": "Khu ĐHQG TP.HCM",
+    "lat": 10.8752807,
+    "lon": 106.7981789,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcltdMgJ7ZHEhpzEL68H4RynX0D4RAlSXTxiMce6L_vTF_v-aOECpvE5qMRAPFwcTCGnWXvRkowYYNHLpr0H2DPA1Xp6NIrvlFKUAbz5N-UjuqoyH05pZqiYkAkVchVYQGJOClWaA=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+Khoa+h%E1%BB%8Dc+T%E1%BB%B1+nhi%C3%AAn,+%C4%90HQG-HCM,+C%C6%A1+s%E1%BB%9F+Linh+Trung./@10.8752807,106.7801545,15z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLfCj-jVKPYL-G0K3whATedw80Xm3tEgpziRG-rpvfaFXtzT006-g7w6LDfYi-0qqvPSxYWuHSt9COVr3-6iuw4oFGHYYWbSUddPGrWRIXEqgnkZtx1HbWHG16TK8u4QkPFCHi0bhw=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+Khoa+h%E1%BB%8Dc+T%E1%BB%B1+nhi%C3%AAn,+%C4%90HQG-HCM,+C%C6%A1+s%E1%BB%9F+Linh+Trung./@10.8752807,106.7801545,15z"
+     }
+    }
+   },
+   {
+    "cat": "KẾT NỐI",
+    "name": "Ga metro Thủ Đức",
+    "lat": 10.8465447,
+    "lon": 106.771314,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLd0iTzhN6AEuGTTlkU6ZA2eDzGp4JLdeDBxiCFnS94zNTX6A8dXUZXE4tlKo5-HESTfBEn1MmZMt28zyKM5OBPkk9B2X35DX_SDBX15dL4TH47i2ExhGREyEjAr8kglVMAjy797=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeX0pP-XO3RMqOimcEM5ig8pzQVYR8Bn1_n57df5HhgMuQF1JqoV_1TNTumm0hTC4o82kMhbPiYyMkQhRa4COcfcHI2msXv1YOOOAYHVYyvHfl6R2ZguZlLLwMe2G27W1oNIjVjUm8AgHTe=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
+     }
+    }
+   },
+   {
+    "cat": "KCN",
+    "name": "KCN Sóng Thần",
+    "lat": 10.890354,
+    "lon": 106.75034,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcVK5o-8wK_A6Hf0U_ahoRCq3ErcMV-fXqA0RakhsLEMPxbj1YTLmoKFqtZE0zFdzUxWRWy7HlzOlWtY_IdvKZTMiy0fgBDjZbnDT7gLeEf1w1QtYWK3v61zZL4sWAhq2HeNrwELzUQgyDT=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+s%C3%B3ng+th%E1%BA%A7n+1/@10.8882226,106.7472497,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeLS1AQCWHwcU016_sRu1n4VoafKGW6Moeqp35h_-ILPFkNZfsf5BUGbKc92WhOJadJPypqmQt_H0XBRhgJVrRMbaA4wsirXStGHdJT3F9P3Tvks2GoDgM_hy3de0jXFuxt1FQDNg=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+s%C3%B3ng+th%E1%BA%A7n+1/@10.8882226,106.7472497,17z"
+     }
+    }
+   },
+   {
+    "cat": "KẾT NỐI",
+    "name": "Sân bay Tân Sơn Nhất",
+    "lat": 10.815564,
+    "lon": 106.663751,
+    "icon": "airport",
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcnPvcbMJ5iAB0-Na0cyyKfxxrNFCNQmbx4OdpcC3cD64EpUKDqTMV2nJd2MHug0Sp2dkEWjp9R2kgoOspUIXZ889IcntIXrjxVuuh5zy3nZYMT0SbKGY5Ik7Qvu2b4q-wy0Mc=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/C%E1%BA%A3ng+h%C3%A0ng+kh%C3%B4ng+qu%E1%BB%91c+t%E1%BA%BF+T%C3%A2n+S%C6%A1n+Nh%E1%BA%A5t/@10.8169828,106.6520747,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLc5NRAwtNlBYJz2GTu0msbn88iM2KAs0A14UWJoVLjN8bKtxzPtEKr_CrYBl2aN5SiW9ExXDHdDaHkmeByZaDKfkFT-mTFQyYxO8Qt7fi2idFY8X0KlZ5x4EIMxjgccZmjbaGZK=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/C%E1%BA%A3ng+h%C3%A0ng+kh%C3%B4ng+qu%E1%BB%91c+t%E1%BA%BF+T%C3%A2n+S%C6%A1n+Nh%E1%BA%A5t/@10.8169828,106.6520747,17z"
+     }
+    }
+   }
+  ],
+  "formats": [
+   "1:1"
+  ],
+  "music": "nang-dong",
+  "marker": "logo",
+  "res": 1080,
+  "brandMode": "project",
+  "brand": {
+   "name": "Green Skyline",
+   "primary": "#21362C",
+   "accent": "#D3B367",
+   "font": "Poppins",
+   "logo": "https://green-skyline.net/wp-content/uploads/2026/03/cropped-green-skyline-logo-192x192.jpg",
+   "fontUrl": "https://green-skyline.net/wp-content/themes/ndmfullpage/assets/fonts/FZ%20Poppins-SemiBold.ttf",
+   "website": "green-skyline.net"
+  },
+  "captions": true,
+  "bright": 1,
+  "roads": true
+ },
+ "brand": {
+  "site": "https://green-skyline.net/"
+ },
+ "script": {
+  "voice": "vi-VN-NamMinhNeural",
+  "brand": true,
+  "intro": "Green Skyline của TBS Land, ngay mặt tiền Quốc lộ một K, cửa ngõ Đông Bắc thành phố.",
+  "pois": [
+   "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chăm sóc sức khỏe chỉ một phút.",
+   "Đại siêu thị đối diện dự án, khoảng ba phút, mua sắm mỗi ngày.",
+   "Khu Đại học Quốc gia khoảng chín phút, môi trường học tập hàng đầu.",
+   "Ga metro Thủ Đức khoảng bảy phút, vào trung tâm thật nhanh.",
+   "Khu công nghiệp Sóng Thần khoảng bảy phút, thuận tiện đi làm.",
+   "Sân bay Tân Sơn Nhất cách gần mười tám ki lô mét."
+  ],
+  "outro": "Green Skyline, một nghìn hai trăm chín mươi sáu căn hộ. Nhận bảng giá ngay."
+ }
+}
