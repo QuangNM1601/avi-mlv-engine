@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.1.2 | `mlv-engine-3.1.2.js` | `029fa54598a9af952b2d55c2a3187df2931efb9f0b08a3d260f828a1338d37f7` |
 | 3.1.1 | `mlv-engine-3.1.1.js` | `68f4f8794f781cecb11e85bb86b8b112c25910b0acbfe92ad800586913a8c544` |
 | 3.1.0 | `mlv-engine-3.1.0.js` | `a9998d2c95cac87c9fb99bd41e450893f4e72dec97b78b4b96b4acd8b279de9e` |
 | 3.0.2 | `mlv-engine-3.0.2.js` | `0c4ce7f52c3c30fe1e4ce4cc2b88f32db20706d9d59dcd76d531b0b13c597bf1` |
@@ -15,6 +16,9 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.1.2
+- Ảnh tiện ích: không đặt ở vùng giữa khung (36–64% ngang, 30–70% vùng bản đồ), không che vùng quanh ghim và logo dự án; cỡ 0,85 / 0,7 / 0,6 × cỡ cũ.
 
 ## 3.1.1
 - Website AVI Realty: avirealty.com → avirealty.vn.

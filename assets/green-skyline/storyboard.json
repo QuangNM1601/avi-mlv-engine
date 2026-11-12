@@ -1,11 +1,12 @@
 {
  "slug": "green-skyline",
- "engine": "mlv-engine 3.1.1 @ 8eb93cd",
+ "engine": "mlv-engine 3.1.2",
  "project": {
   "name": "Green Skyline",
   "developer": "TBS Group / TBS Land",
   "lat": 10.8883098,
-  "lon": 106.7753449
+  "lon": 106.7753449,
+  "handover": "Q4/2026"
  },
  "cfg": {
   "name": "Green Skyline",
@@ -14,8 +15,8 @@
    "GREEN",
    "SKYLINE"
   ],
-  "subtitle": "1.296 căn · 4 tháp · TBS Land",
-  "tagline": "Y tế · mua sắm · metro · sân bay",
+  "subtitle": "1.296 căn · Nhận nhà Q4/2026",
+  "tagline": "Y tế · mua sắm · metro · công nghệ cao",
   "hotline": "0965.909.339",
   "project": {
    "lat": 10.8883098,
@@ -36,7 +37,8 @@
       "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLezlNIV1bXVYBEvK_2MZxo6_eaFjmGz6VrK23UDFRkqLA3boftEp1hMEdf1RhvVmuVyZ6l-JDvNRLqltXw339pJQ7bM9ruiJx50xjL53hSRDzNp1V1nJKhV_pznlYXjY44G8FBiGA=w1600-h1200-k-no",
       "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
      }
-    }
+    },
+    "pick": "A"
    },
    {
     "cat": "MUA SẮM",
@@ -52,7 +54,8 @@
       "img": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R4wLGRDf0jmFxDwxjx8MkRurTDHY67MPIN8-PBdfQvX0LZKdzS3hQcklK8BzLCew27G9rP0KJ7c_AtGH0y_yrUMKjcLO6kAcPT7Tn8wrnVMM_PyzIlnLjg-UcNkavVcTqbqNN9n1EYsOo=w1600-h1200-k-no",
       "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
      }
-    }
+    },
+    "pick": "B"
    },
    {
     "cat": "GIÁO DỤC",
@@ -68,7 +71,8 @@
       "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLfCj-jVKPYL-G0K3whATedw80Xm3tEgpziRG-rpvfaFXtzT006-g7w6LDfYi-0qqvPSxYWuHSt9COVr3-6iuw4oFGHYYWbSUddPGrWRIXEqgnkZtx1HbWHG16TK8u4QkPFCHi0bhw=w1600-h1200-k-no",
       "page": "https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+Khoa+h%E1%BB%8Dc+T%E1%BB%B1+nhi%C3%AAn,+%C4%90HQG-HCM,+C%C6%A1+s%E1%BB%9F+Linh+Trung./@10.8752807,106.7801545,15z"
      }
-    }
+    },
+    "pick": "A"
    },
    {
     "cat": "KẾT NỐI",
@@ -84,23 +88,25 @@
       "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeX0pP-XO3RMqOimcEM5ig8pzQVYR8Bn1_n57df5HhgMuQF1JqoV_1TNTumm0hTC4o82kMhbPiYyMkQhRa4COcfcHI2msXv1YOOOAYHVYyvHfl6R2ZguZlLLwMe2G27W1oNIjVjUm8AgHTe=w1600-h1200-k-no",
       "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
      }
-    }
+    },
+    "pick": "A"
    },
    {
     "cat": "KCN",
-    "name": "KCN Sóng Thần",
-    "lat": 10.890354,
-    "lon": 106.75034,
+    "name": "Khu Công nghệ cao TP.HCM",
+    "lat": 10.8576366,
+    "lon": 106.7881397,
     "photoSrc": {
      "A": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcVK5o-8wK_A6Hf0U_ahoRCq3ErcMV-fXqA0RakhsLEMPxbj1YTLmoKFqtZE0zFdzUxWRWy7HlzOlWtY_IdvKZTMiy0fgBDjZbnDT7gLeEf1w1QtYWK3v61zZL4sWAhq2HeNrwELzUQgyDT=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+s%C3%B3ng+th%E1%BA%A7n+1/@10.8882226,106.7472497,17z"
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLdx8zcWcEMkpGemf1nXpjG6EEnPbe9wgsq3cH4pQd6kqFe1BT9em8wdO1xG6MiNFA5XJaN6Lk3uE_TxLddMG3Eom2pYSLTCIzMTd6kgf6HAnEGy4Z164aaZaJBzkCZ6WwqGNduZ=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+C%C3%B4ng+ngh%E1%BB%87+cao+TP.HCM/@10.8576366,106.7836336,17z"
      },
      "B": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeLS1AQCWHwcU016_sRu1n4VoafKGW6Moeqp35h_-ILPFkNZfsf5BUGbKc92WhOJadJPypqmQt_H0XBRhgJVrRMbaA4wsirXStGHdJT3F9P3Tvks2GoDgM_hy3de0jXFuxt1FQDNg=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Khu+c%C3%B4ng+nghi%E1%BB%87p+s%C3%B3ng+th%E1%BA%A7n+1/@10.8882226,106.7472497,17z"
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLe0bUm5e3xVyUxfmlcNg6PbO45JGlHsIziskjmzSQjGPib8Ce1hsr0aK1OvJ3s0EHSbNTXhH4Bh-91X00B6brD42Q2QlBX9XSRoht2Q0YrPIFYXRWAsCO2fJTenyBsd_Qijr5ogow=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Khu+C%C3%B4ng+ngh%E1%BB%87+cao+TP.HCM/@10.8576366,106.7836336,17z"
      }
-    }
+    },
+    "pick": "B"
    },
    {
     "cat": "KẾT NỐI",
@@ -117,13 +123,14 @@
       "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLc5NRAwtNlBYJz2GTu0msbn88iM2KAs0A14UWJoVLjN8bKtxzPtEKr_CrYBl2aN5SiW9ExXDHdDaHkmeByZaDKfkFT-mTFQyYxO8Qt7fi2idFY8X0KlZ5x4EIMxjgccZmjbaGZK=w1600-h1200-k-no",
       "page": "https://www.google.com/maps/place/C%E1%BA%A3ng+h%C3%A0ng+kh%C3%B4ng+qu%E1%BB%91c+t%E1%BA%BF+T%C3%A2n+S%C6%A1n+Nh%E1%BA%A5t/@10.8169828,106.6520747,17z"
      }
-    }
+    },
+    "pick": "B"
    }
   ],
   "formats": [
    "1:1"
   ],
-  "music": "nang-dong",
+  "music": "sang-trong",
   "marker": "logo",
   "res": 1080,
   "brandMode": "project",
@@ -146,15 +153,15 @@
  "script": {
   "voice": "vi-VN-NamMinhNeural",
   "brand": true,
-  "intro": "Green Skyline của TBS Land, ngay mặt tiền Quốc lộ một K, cửa ngõ Đông Bắc thành phố.",
+  "intro": "Green Skyline của TBS Land, mặt tiền Quốc lộ một K, nhận nhà từ quý bốn năm hai không hai sáu.",
   "pois": [
    "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chăm sóc sức khỏe chỉ một phút.",
    "Đại siêu thị đối diện dự án, khoảng ba phút, mua sắm mỗi ngày.",
    "Khu Đại học Quốc gia khoảng chín phút, môi trường học tập hàng đầu.",
    "Ga metro Thủ Đức khoảng bảy phút, vào trung tâm thật nhanh.",
-   "Khu công nghiệp Sóng Thần khoảng bảy phút, thuận tiện đi làm.",
+   "Khu Công nghệ cao khoảng bảy phút, thuận tiện cho kỹ sư, chuyên gia.",
    "Sân bay Tân Sơn Nhất cách gần mười tám ki lô mét."
   ],
-  "outro": "Green Skyline, một nghìn hai trăm chín mươi sáu căn hộ. Nhận bảng giá ngay."
+  "outro": "Green Skyline mời quý khách tham quan nhà thật và nhận tư vấn chuyên sâu."
  }
 }
