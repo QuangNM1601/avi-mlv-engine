@@ -26,7 +26,7 @@ import argparse, asyncio, base64, hashlib, io, json, mimetypes, os, re, shutil, 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENGINE_FILE = ROOT / "mlv-engine-3.4.0.js"
+ENGINE_FILE = ROOT / "mlv-engine-3.5.0.js"
 ORIGIN = "https://server.arcgisonline.com"
 PAGE = ORIGIN + "/__mlv/index.html"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "

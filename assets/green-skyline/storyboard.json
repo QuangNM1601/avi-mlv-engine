@@ -1,6 +1,6 @@
 {
  "slug": "green-skyline",
- "engine": "mlv-engine 3.3.0",
+ "engine": "mlv-engine 3.5.0",
  "project": {
   "name": "Green Skyline",
   "developer": "TBS Group / TBS Land",
@@ -16,51 +16,13 @@
    "SKYLINE"
   ],
   "subtitle": "1.296 căn · Nhận nhà Q4/2026",
-  "tagline": "Y tế · mua sắm · metro · công nghệ cao",
+  "tagline": "Thiết yếu 1 phút · đi làm dưới 20 phút",
   "hotline": "0965.909.339",
   "project": {
    "lat": 10.8883098,
    "lon": 106.7753449
   },
   "pois": [
-   {
-    "cat": "Y TẾ",
-    "name": "BV Hoàn Mỹ Thủ Đức",
-    "lat": 10.8878554,
-    "lon": 106.7737473,
-    "photoSrc": {
-     "A": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcJQiiXxjVmBiNmiTZCFxXT9RS0nF7ZLSRitJ9cIdeTvOLt0-89MSIgsBtIcwn0lhP2-OTQS0yjFWxsQp_ZwFm5CXKC3yo7SUFMAD3LnmsufAuZYx3edEpXbbmD-YSawsKN5cM=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
-     },
-     "B": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLezlNIV1bXVYBEvK_2MZxo6_eaFjmGz6VrK23UDFRkqLA3boftEp1hMEdf1RhvVmuVyZ6l-JDvNRLqltXw339pJQ7bM9ruiJx50xjL53hSRDzNp1V1nJKhV_pznlYXjY44G8FBiGA=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
-     }
-    },
-    "pick": "A",
-    "motoKm": 0.4,
-    "motoMin": 1
-   },
-   {
-    "cat": "MUA SẮM",
-    "name": "GO! Dĩ An",
-    "lat": 10.8894375,
-    "lon": 106.7758125,
-    "photoSrc": {
-     "A": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeveN5lOLmZQsOR98eVhlKMTtUNu8RtTNOxO4dULK4sCdEfMGx-tGZzB4_FgtsUhh-A5fGIM80Wu9YPkuWQZvJxf31hltH_kgJB2M92LQ94WdQTwjixX1TcUMCSCJLK9jqBge4=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
-     },
-     "B": {
-      "img": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R4wLGRDf0jmFxDwxjx8MkRurTDHY67MPIN8-PBdfQvX0LZKdzS3hQcklK8BzLCew27G9rP0KJ7c_AtGH0y_yrUMKjcLO6kAcPT7Tn8wrnVMM_PyzIlnLjg-UcNkavVcTqbqNN9n1EYsOo=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
-     }
-    },
-    "pick": "B",
-    "motoKm": 0.2,
-    "motoMin": 1
-   },
    {
     "cat": "GIÁO DỤC",
     "name": "Khu ĐHQG TP.HCM",
@@ -78,26 +40,8 @@
     },
     "pick": "A",
     "motoKm": 4.1,
-    "motoMin": 10
-   },
-   {
-    "cat": "KẾT NỐI",
-    "name": "Ga metro Thủ Đức",
-    "lat": 10.8465447,
-    "lon": 106.771314,
-    "photoSrc": {
-     "A": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLd0iTzhN6AEuGTTlkU6ZA2eDzGp4JLdeDBxiCFnS94zNTX6A8dXUZXE4tlKo5-HESTfBEn1MmZMt28zyKM5OBPkk9B2X35DX_SDBX15dL4TH47i2ExhGREyEjAr8kglVMAjy797=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
-     },
-     "B": {
-      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeX0pP-XO3RMqOimcEM5ig8pzQVYR8Bn1_n57df5HhgMuQF1JqoV_1TNTumm0hTC4o82kMhbPiYyMkQhRa4COcfcHI2msXv1YOOOAYHVYyvHfl6R2ZguZlLLwMe2G27W1oNIjVjUm8AgHTe=w1600-h1200-k-no",
-      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
-     }
-    },
-    "pick": "A",
-    "motoKm": 6.8,
-    "motoMin": 16
+    "motoMin": 10,
+    "tag": "7:00 · CON ĐI HỌC"
    },
    {
     "cat": "KCN",
@@ -116,7 +60,68 @@
     },
     "pick": "B",
     "motoKm": 6.9,
-    "motoMin": 17
+    "motoMin": 17,
+    "tag": "7:30 · ĐI LÀM"
+   },
+   {
+    "cat": "KẾT NỐI",
+    "name": "Ga metro Thủ Đức",
+    "lat": 10.8465447,
+    "lon": 106.771314,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLd0iTzhN6AEuGTTlkU6ZA2eDzGp4JLdeDBxiCFnS94zNTX6A8dXUZXE4tlKo5-HESTfBEn1MmZMt28zyKM5OBPkk9B2X35DX_SDBX15dL4TH47i2ExhGREyEjAr8kglVMAjy797=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeX0pP-XO3RMqOimcEM5ig8pzQVYR8Bn1_n57df5HhgMuQF1JqoV_1TNTumm0hTC4o82kMhbPiYyMkQhRa4COcfcHI2msXv1YOOOAYHVYyvHfl6R2ZguZlLLwMe2G27W1oNIjVjUm8AgHTe=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
+     }
+    },
+    "pick": "A",
+    "motoKm": 6.8,
+    "motoMin": 16,
+    "tag": "VÀO TRUNG TÂM"
+   },
+   {
+    "cat": "MUA SẮM",
+    "name": "GO! Dĩ An",
+    "lat": 10.8894375,
+    "lon": 106.7758125,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLeveN5lOLmZQsOR98eVhlKMTtUNu8RtTNOxO4dULK4sCdEfMGx-tGZzB4_FgtsUhh-A5fGIM80Wu9YPkuWQZvJxf31hltH_kgJB2M92LQ94WdQTwjixX1TcUMCSCJLK9jqBge4=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R4wLGRDf0jmFxDwxjx8MkRurTDHY67MPIN8-PBdfQvX0LZKdzS3hQcklK8BzLCew27G9rP0KJ7c_AtGH0y_yrUMKjcLO6kAcPT7Tn8wrnVMM_PyzIlnLjg-UcNkavVcTqbqNN9n1EYsOo=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
+     }
+    },
+    "pick": "B",
+    "motoKm": 0.2,
+    "motoMin": 1,
+    "tag": "18:00 · TAN LÀM"
+   },
+   {
+    "cat": "Y TẾ",
+    "name": "BV Hoàn Mỹ Thủ Đức",
+    "lat": 10.8878554,
+    "lon": 106.7737473,
+    "photoSrc": {
+     "A": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLcJQiiXxjVmBiNmiTZCFxXT9RS0nF7ZLSRitJ9cIdeTvOLt0-89MSIgsBtIcwn0lhP2-OTQS0yjFWxsQp_ZwFm5CXKC3yo7SUFMAD3LnmsufAuZYx3edEpXbbmD-YSawsKN5cM=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
+     },
+     "B": {
+      "img": "https://lh3.googleusercontent.com/grass-cs/AABkmLezlNIV1bXVYBEvK_2MZxo6_eaFjmGz6VrK23UDFRkqLA3boftEp1hMEdf1RhvVmuVyZ6l-JDvNRLqltXw339pJQ7bM9ruiJx50xjL53hSRDzNp1V1nJKhV_pznlYXjY44G8FBiGA=w1600-h1200-k-no",
+      "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
+     }
+    },
+    "pick": "A",
+    "motoKm": 0.4,
+    "motoMin": 1,
+    "tag": "NỬA ĐÊM · KHI CẦN"
    },
    {
     "cat": "KẾT NỐI",
@@ -136,11 +141,12 @@
     },
     "pick": "B",
     "motoKm": 20.5,
-    "motoMin": 44
+    "motoMin": 44,
+    "tag": "CUỐI TUẦN · ĐI XA"
    }
   ],
   "formats": [
-   "1:1"
+   "9:16"
   ],
   "music": "sang-trong",
   "marker": "logo",
@@ -162,31 +168,76 @@
   "bgBlur": 0,
   "hook": [
    "1 PHÚT",
-   "TỚI BỆNH VIỆN & SIÊU THỊ",
+   "TỚI SIÊU THỊ & BỆNH VIỆN",
    "GREEN SKYLINE · TBS LAND · NHẬN NHÀ Q4/2026"
   ],
   "hero": {
    "intro": "https://green-skyline.net/wp-content/themes/ndmfullpage/assets/assets/index/index6.png",
    "outro": "https://green-skyline.net/wp-content/themes/ndmfullpage/assets/assets/other/bgindex-2.png",
    "dur": 3
-  }
+  },
+  "hookBg": "map",
+  "hookPoi": 3,
+  "cta": "XEM NHÀ THẬT · NHẬN TƯ VẤN CHUYÊN SÂU"
  },
  "brand": {
   "site": "https://green-skyline.net/"
  },
  "script": {
-  "voice": "vi-VN-NamMinhNeural",
+  "engine": "vieneu",
+  "voice": "Đức Trí",
   "brand": true,
-  "intro": "Một phút tới bệnh viện, siêu thị! Green Skyline, mặt tiền Quốc lộ một K.",
+  "intro": "Một phút tới siêu thị, một phút tới bệnh viện. Đây là một ngày sống ở Green Skyline.",
   "pois": [
-   "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chỉ một phút xe máy.",
-   "Đại siêu thị ngay đối diện, băng qua đường chỉ một phút.",
-   "Khu Đại học Quốc gia khoảng mười phút, môi trường học tập hàng đầu.",
-   "Ga metro Thủ Đức khoảng mười sáu phút, vào trung tâm thật nhanh.",
-   "Khu Công nghệ cao khoảng mười bảy phút, thuận tiện cho kỹ sư, chuyên gia.",
-   "Sân bay Tân Sơn Nhất cách khoảng hai mươi ki lô mét."
+   "Bảy giờ sáng, con tới Làng Đại học chỉ mười phút xe máy.",
+   "Bạn vào ca ở Khu Công nghệ cao, mười bảy phút là tới.",
+   "Hẹn khách ở trung tâm? Mười sáu phút ra ga metro, đi thẳng Bến Thành.",
+   "Tan làm, băng qua đường là tới siêu thị GO!.",
+   "Nửa đêm con sốt? Bệnh viện Hoàn Mỹ ngay sát bên.",
+   "Cuối tuần về quê, bốn mươi bốn phút tới sân bay Tân Sơn Nhất."
   ],
-  "outro": "Green Skyline mời quý khách tham quan nhà thật và nhận tư vấn chuyên sâu!",
-  "style": "song-dong"
+  "outro": "Tiện trong một phút, đi làm dưới hai mươi phút. Green Skyline, mời bạn xem nhà thật!"
+ },
+ "story": {
+  "frame": "Một ngày ở Green Skyline",
+  "message": "Thiết yếu trong 1 phút, đi làm dưới 20 phút",
+  "backup": "Vòng bán kính",
+  "hooks": {
+   "A": {
+    "hook": [
+     "1 PHÚT",
+     "TỚI SIÊU THỊ & BỆNH VIỆN",
+     "GREEN SKYLINE · TBS LAND · NHẬN NHÀ Q4/2026"
+    ],
+    "hookPoi": 3,
+    "say": "Một phút tới siêu thị, một phút tới bệnh viện.",
+    "score": 5
+   },
+   "B": {
+    "hook": [
+     "17 PHÚT",
+     "TỚI KHU CÔNG NGHỆ CAO",
+     "GREEN SKYLINE · TBS LAND · NHẬN NHÀ Q4/2026"
+    ],
+    "hookPoi": 1,
+    "say": "Làm ở Khu Công nghệ cao? Về nhà chỉ mười bảy phút.",
+    "score": 5
+   },
+   "C": {
+    "hook": [
+     "NỬA ĐÊM CON SỐT?",
+     "BỆNH VIỆN CÁCH 1 PHÚT",
+     "GREEN SKYLINE · TBS LAND · NHẬN NHÀ Q4/2026"
+    ],
+    "hookPoi": 4,
+    "say": "Nửa đêm con sốt? Bệnh viện chỉ cách một phút.",
+    "score": 5
+   },
+   "D": {
+    "hookBg": "hero",
+    "score": 4
+   }
+  },
+  "pick": "A"
  }
 }

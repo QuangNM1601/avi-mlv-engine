@@ -6,6 +6,7 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 
 | Phiên bản | File | SHA-256 |
 |---|---|---|
+| 3.5.0 | `mlv-engine-3.5.0.js` | `e8226a0952e95669b4cee7ffc608bdcf84ad8a7cd2eef2d1e5210099e0731cb2` |
 | 3.4.0 | `mlv-engine-3.4.0.js` | `0651fa033b05a2ca902352b9e590c65da2d0098fbcd0040233941033459c17ad` |
 | 3.3.0 | `mlv-engine-3.3.0.js` | `465aae93193cad7455f377d88610dee3b88321754698f67bb5910798a06ea7c9` |
 | 3.2.0 | `mlv-engine-3.2.0.js` | `00d0f01b528189f36283477ecfb1ea80c1840bf9ae43789a884b4e93d5743f83` |
@@ -19,6 +20,15 @@ Engine dựng video vị trí dự án trên ảnh vệ tinh cho skill `map-loca
 | 2.1.0 | `mlv-engine-2.1.0.js` | `b2a61c4048df419c346b56de86c8ffb9e137e75c0bdb21d86f88b5778db1b3e5` |
 
 Địa chỉ dùng trong skill: `https://cdn.jsdelivr.net/gh/QuangNM1601/avi-mlv-engine@<mã commit>/mlv-engine-<phiên bản>.js` (ghim theo commit, không đổi được; mã commit hiện hành ghi trong SKILL.md).
+
+## 3.5.0
+| CFG | Làm gì |
+|---|---|
+| `hookBg:'map'` + `hookPoi:i` | 3 giây đầu là cảnh bản đồ của tiện ích `i` (tuyến đã vẽ, ảnh, nhãn) làm bằng chứng cho câu móc; chữ ở trên (9:16) hoặc dưới ghim dự án (1:1, 16:9); ảnh và nhãn né vùng chữ; đẩy zoom 0,5 s; chớp trắng khi sang cảnh mở. `hookBg:'hero'` (mặc định cũ) giữ ảnh phối cảnh. Không có `hero` vẫn chạy (`hookDur`, mặc định 3) |
+| `pois[].tag` | Nhãn lợi ích trên thẻ tiện ích thay tên loại (vd "7:00 · CON ĐI HỌC") |
+| Âm thanh | Có câu móc: tiếng "pop" ở 0,08 s, "whoosh" lúc cắt; tiếng vào ngay (fade-in 0,04 s) |
+
+`scripts/tts.py`: `engine:'vieneu'` (mặc định) — VieNeu-TTS v3 Turbo (Apache-2.0) chạy CPU trong `~/mlv-tts`, đọc thẳng tên tiếng Anh, mốc phụ đề bằng faster-whisper; thiếu `~/mlv-tts` → tự dùng Edge. Phụ đề chia theo vế câu, không cắt giữa số và đơn vị. `scripts/vieneu_say.py`: đọc nhiều câu, nạp mô hình 1 lần. `tools/patch_350.py`: bản vá 3.4.0 → 3.5.0.
 
 ## 3.4.0
 - Dựng nhanh gấp khoảng 12 lần: bộ lọc độ sáng áp 1 lần cho mỗi ô ảnh vệ tinh khi giải mã, không áp lại mỗi khung (1080p 1:1, 47 giây: 14 phút → 73 giây trên máy 2 nhân).
@@ -95,7 +105,8 @@ Cấu hình kiểu 2.2 chạy y như cũ.
 | `scripts/mlv.py <lệnh>` | Workspace của Claude (Python + Playwright + Chrome) | Cả quy trình không cần máy người dùng: `gmaps`, `geo`, `poi`, `dist`, `brand`, `images`, `run` (khung storyboard / MP4), `compose`. Xem đầu file |
 | `scripts/check_voice.py voice.mp3 "tên"...` | Workspace của Claude (faster-whisper) | Nghe lại giọng đọc, báo tên tiếng Anh nào chưa đọc đúng |
 | `tools/brand-snippet.js` | Tab web chủ đầu tư (javascript_tool) | Trả JSON màu, font, logo; bản một dòng nằm trong SKILL.md |
-| `scripts/tts.py <thư mục>` | Workspace của Claude hoặc máy người dùng (Python + edge-tts + ffmpeg) | `script.json` → `voice.mp3` + `words.json`, in `poiDur`, `introDur`, `outroDur` |
+| `scripts/tts.py <thư mục>` | Workspace của Claude (VieNeu trong `~/mlv-tts`, hoặc edge-tts) + ffmpeg | `script.json` → `voice.mp3` + `words.json`, in `poiDur`, `introDur`, `outroDur` |
+| `scripts/vieneu_say.py spec.json` | `~/mlv-tts/bin/python` | Đọc các câu bằng VieNeu-TTS v3 Turbo (gọi từ tts.py) |
 | `scripts/push_assets.sh <slug> <file...>` | Workspace của Claude | Đẩy logo/nhạc/giọng vào `assets/<slug>/`, in URL jsDelivr |
 | `scripts/merge_th.mjs <map.mp4> <talking.mp4>` | Máy người dùng (Node + ffmpeg) | Talking head mở → bản đồ → talking head chốt, −14 LUFS |
 
@@ -105,4 +116,4 @@ Thư mục `assets/<tên-dự-án>/`: logo, ảnh phối cảnh, nhạc riêng, 
 - Không sửa file đã phát hành. Bản mới = file mới (`mlv-engine-<phiên bản>.js`) trong commit mới, rồi cập nhật URL (theo mã commit) và SHA-256 trong SKILL.md.
 - Logo AVI Realty nhúng trong file là tài sản thương hiệu của AVI Realty, chỉ dùng cho nội dung của AVI Realty.
 - Dựa trên skill map-location-video của mktvantamland. Gói kèm mp4-muxer và webm-muxer (MIT, Vanilagy); giấy phép ở đầu file engine. Icon Maki (CC0, Mapbox).
-- Ảnh vệ tinh Esri/Maxar, dữ liệu OpenStreetMap (Overpass), tuyến đường OSRM, giọng Microsoft Edge (edge-tts) dùng theo điều khoản của từng nhà cung cấp.
+- Ảnh vệ tinh Esri/Maxar, dữ liệu OpenStreetMap (Overpass), tuyến đường OSRM, giọng Microsoft Edge (edge-tts), VieNeu-TTS (Apache-2.0, có watermark âm thanh mặc định) dùng theo điều khoản của từng nhà cung cấp.
