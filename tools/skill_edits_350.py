@@ -12,6 +12,7 @@ def e(old, new):
     E.append({"old_string": old, "new_string": new})
 
 
+e("## 3b. Ảnh phối cảnh và câu móc (3 giây đầu)", "## 3b. Ảnh phối cảnh")
 e("# Video vị trí dự án trên ảnh vệ tinh — AVI Realty (v3.4)", "# Video vị trí dự án trên ảnh vệ tinh — AVI Realty (v3.5)")
 
 e("""Mặc định: 1:1 · nhạc Năng động · giọng nam, ngữ điệu "song-dong" · thương hiệu Dự án + AVI · độ sáng 1 · tên đường bật · phụ đề bật · 3 giây đầu là ảnh phối cảnh sáng rõ + câu móc, cảnh kết có ảnh phối cảnh sau thẻ hotline · cự ly xe máy · 1080p.""",
@@ -67,7 +68,7 @@ e("""- `intro` ≤ 16 từ: mở bằng nội dung câu móc (vd "Một phút t�
   """- Lời đọc kể theo khung truyện (bước 4b), không liệt kê:
   - `intro`: câu nói 3 giây của câu móc + 1 câu dẫn vào khung truyện (vd "Đây là một ngày sống ở Green Skyline.").
   - `pois`: xếp lại `pois` trong CFG theo khung truyện. Mỗi câu ≤ 14 từ = [mốc giờ / tình huống] + [con số] + [việc làm được] (vd "Bảy giờ sáng, con tới Làng Đại học chỉ mười phút xe máy." · "Nửa đêm con sốt? Bệnh viện Hoàn Mỹ ngay sát bên."). Câu sau nối câu trước (sáng → chiều → cuối tuần; gần → xa). Xưng "bạn".
-  - `outro`: nhắc lại thông điệp chính + mời 1 việc cụ thể (vd "Tiện trong một phút, đi làm dưới hai mươi phút. Mời bạn xem nhà thật tại Green Skyline!").
+  - `outro`: nhắc lại thông điệp chính + mời 1 việc cụ thể (vd "Tiện trong một phút, đi làm dưới hai mươi phút. Green Skyline, mời bạn xem nhà thật!"); tên tiếng Anh không đặt cuối câu.
   - `pois[].tag` ≤ 20 ký tự theo mạch truyện (vd "7:00 · CON ĐI HỌC", "NỬA ĐÊM · KHI CẦN") — hiện trên thẻ thay tên loại.
   - Bỏ từ rỗng khi không kèm số: đẳng cấp, hàng đầu, thuận tiện, tiện lợi, dễ dàng, nhanh chóng, lý tưởng, tuyệt vời, sầm uất. Không nói điều chưa kiểm được ("không kẹt xe", giá, quy hoạch không nguồn).
   - Số đọc bằng chữ, khớp số liệu ("mười bảy phút", "ba phẩy bốn ki lô mét").""")
