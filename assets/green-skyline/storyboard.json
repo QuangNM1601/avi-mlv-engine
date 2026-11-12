@@ -1,6 +1,6 @@
 {
  "slug": "green-skyline",
- "engine": "mlv-engine 3.1.2",
+ "engine": "mlv-engine 3.2.0",
  "project": {
   "name": "Green Skyline",
   "developer": "TBS Group / TBS Land",
@@ -38,7 +38,9 @@
       "page": "https://www.google.com/maps/place/B%E1%BB%87nh+vi%E1%BB%87n+Ho%C3%A0n+M%E1%BB%B9+Th%E1%BB%A7+%C4%90%E1%BB%A9c/@10.8878554,106.7737473,17z"
      }
     },
-    "pick": "A"
+    "pick": "A",
+    "motoKm": 0.4,
+    "motoMin": 1
    },
    {
     "cat": "MUA SẮM",
@@ -55,7 +57,9 @@
       "page": "https://www.google.com/maps/place/Go!+D%C4%A9+An/@10.8892847,106.7715752,17z"
      }
     },
-    "pick": "B"
+    "pick": "B",
+    "motoKm": 0.2,
+    "motoMin": 1
    },
    {
     "cat": "GIÁO DỤC",
@@ -72,7 +76,9 @@
       "page": "https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+Khoa+h%E1%BB%8Dc+T%E1%BB%B1+nhi%C3%AAn,+%C4%90HQG-HCM,+C%C6%A1+s%E1%BB%9F+Linh+Trung./@10.8752807,106.7801545,15z"
      }
     },
-    "pick": "A"
+    "pick": "A",
+    "motoKm": 4.1,
+    "motoMin": 10
    },
    {
     "cat": "KẾT NỐI",
@@ -89,7 +95,9 @@
       "page": "https://www.google.com/maps/place/Ga+Th%E1%BB%A7+%C4%90%E1%BB%A9c+Metro+Su%E1%BB%91i+Ti%C3%AAn+%26+B%E1%BA%BFn+Th%C3%A0nh/@10.8465447,106.771314,17z"
      }
     },
-    "pick": "A"
+    "pick": "A",
+    "motoKm": 6.8,
+    "motoMin": 16
    },
    {
     "cat": "KCN",
@@ -106,7 +114,9 @@
       "page": "https://www.google.com/maps/place/Khu+C%C3%B4ng+ngh%E1%BB%87+cao+TP.HCM/@10.8576366,106.7836336,17z"
      }
     },
-    "pick": "B"
+    "pick": "B",
+    "motoKm": 6.9,
+    "motoMin": 17
    },
    {
     "cat": "KẾT NỐI",
@@ -124,7 +134,9 @@
       "page": "https://www.google.com/maps/place/C%E1%BA%A3ng+h%C3%A0ng+kh%C3%B4ng+qu%E1%BB%91c+t%E1%BA%BF+T%C3%A2n+S%C6%A1n+Nh%E1%BA%A5t/@10.8169828,106.6520747,17z"
      }
     },
-    "pick": "B"
+    "pick": "B",
+    "motoKm": 20.5,
+    "motoMin": 44
    }
   ],
   "formats": [
@@ -145,7 +157,9 @@
   },
   "captions": true,
   "bright": 1,
-  "roads": true
+  "roads": true,
+  "travel": "moto",
+  "bgBlur": 1
  },
  "brand": {
   "site": "https://green-skyline.net/"
@@ -155,13 +169,14 @@
   "brand": true,
   "intro": "Green Skyline của TBS Land, mặt tiền Quốc lộ một K, nhận nhà từ quý bốn năm hai không hai sáu.",
   "pois": [
-   "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chăm sóc sức khỏe chỉ một phút.",
-   "Đại siêu thị đối diện dự án, khoảng ba phút, mua sắm mỗi ngày.",
-   "Khu Đại học Quốc gia khoảng chín phút, môi trường học tập hàng đầu.",
-   "Ga metro Thủ Đức khoảng bảy phút, vào trung tâm thật nhanh.",
-   "Khu Công nghệ cao khoảng bảy phút, thuận tiện cho kỹ sư, chuyên gia.",
-   "Sân bay Tân Sơn Nhất cách gần mười tám ki lô mét."
+   "Bệnh viện Hoàn Mỹ Thủ Đức liền kề, chỉ một phút xe máy.",
+   "Đại siêu thị ngay đối diện, băng qua đường chỉ một phút.",
+   "Khu Đại học Quốc gia khoảng mười phút, môi trường học tập hàng đầu.",
+   "Ga metro Thủ Đức khoảng mười sáu phút, vào trung tâm thật nhanh.",
+   "Khu Công nghệ cao khoảng mười bảy phút, thuận tiện cho kỹ sư, chuyên gia.",
+   "Sân bay Tân Sơn Nhất cách khoảng hai mươi ki lô mét."
   ],
-  "outro": "Green Skyline mời quý khách tham quan nhà thật và nhận tư vấn chuyên sâu."
+  "outro": "Green Skyline mời quý khách tham quan nhà thật và nhận tư vấn chuyên sâu!",
+  "style": "song-dong"
  }
 }
